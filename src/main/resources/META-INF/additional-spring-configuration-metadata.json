@@ -1,0 +1,13 @@
+{
+  "properties": [
+    {
+      "name": "auction.app.jwtSecret",
+      "type": "java.lang.String",
+      "description": "Description for auction.app.jwtSecret."
+    },
+    {
+      "name": "auction.app.jwtExpirationMs",
+      "type": "java.lang.String",
+      "description": "Description for auction.app.jwtExpirationMs."
+    }
+  ] }
