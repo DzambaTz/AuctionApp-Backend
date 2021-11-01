@@ -9,5 +9,10 @@
       "name": "auction.app.jwtExpirationMs",
       "type": "java.lang.String",
       "description": "Description for auction.app.jwtExpirationMs."
+    },
+    {
+      "name": "auction.app.jwtRefreshExpirationMs",
+      "type": "java.lang.String",
+      "description": "Description for auction.app.jwtRefreshExpirationMs."
     }
   ] }
