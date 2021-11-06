@@ -4,9 +4,8 @@ import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
-import com.example.AuctionApp.security.services.UserDetailsImpl;
+import com.example.AuctionApp.security.services.implementations.UserDetailsImpl;
 
 import java.util.Date;
 
@@ -25,8 +24,11 @@ public class JwtUtils {
     }
 
     public String generateTokenFromEmail(String email) {
-        return Jwts.builder().setSubject(email).setIssuedAt(new Date())
-                .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs)).signWith(SignatureAlgorithm.HS512, jwtSecret)
+        return Jwts.builder()
+                .setSubject(email)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
+                .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact();
     }
 

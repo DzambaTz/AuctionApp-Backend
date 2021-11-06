@@ -1,6 +1,6 @@
 package com.example.AuctionApp.models;
 
-public enum Roles_enum {
+public enum RolesEnum {
     ROLE_USER,
     ROLE_SELLER
 }

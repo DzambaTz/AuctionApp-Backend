@@ -16,7 +16,7 @@ import java.util.Set;
 @Table(name = "users",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = "email"),
-                @UniqueConstraint(columnNames = "phone_number")
+                @UniqueConstraint(columnNames = "phoneNumber")
         })
 @Getter
 @Setter
@@ -29,11 +29,11 @@ public class User {
 
     @NotBlank
     @Size(max = 20)
-    private String first_name;
+    private String firstName;
 
     @NotBlank
     @Size(max = 20)
-    private String last_name;
+    private String lastName;
 
     @NotBlank
     @Size(max = 50)
@@ -46,7 +46,7 @@ public class User {
 
     @NotBlank
     @Size(max = 30)
-    private String phone_number;
+    private String phoneNumber;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(	name = "user_roles",
@@ -54,11 +54,11 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
-    public User(String first_name, String last_name, String email, String password, String phone_number) {
-        this.first_name = first_name;
-        this.last_name = last_name;
+    public User(String firstName, String lastName, String email, String password, String phoneNumber) {
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.email = email;
         this.password = password;
-        this.phone_number = phone_number;
+        this.phoneNumber = phoneNumber;
     }
 }

@@ -15,7 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import com.example.AuctionApp.security.jwt.AuthEntryPointJwt;
 import com.example.AuctionApp.security.jwt.AuthTokenFilter;
-import com.example.AuctionApp.security.services.UserDetailsServiceImpl;
+import com.example.AuctionApp.security.services.implementations.UserDetailsServiceImpl;
 
 @Configuration
 @EnableWebSecurity

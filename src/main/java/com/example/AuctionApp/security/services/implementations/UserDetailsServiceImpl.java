@@ -1,4 +1,4 @@
-package com.example.AuctionApp.security.services;
+package com.example.AuctionApp.security.services.implementations;
 
 import com.example.AuctionApp.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String email) throws BadCredentialsException {
-        User user = userRepository.findByEmail(email)
+        final User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new BadCredentialsException("User Not Found with email: " + email));
 
         return UserDetailsImpl.build(user);

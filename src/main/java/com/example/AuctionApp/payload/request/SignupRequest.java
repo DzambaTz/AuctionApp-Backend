@@ -24,13 +24,13 @@ public class SignupRequest {
 
     @NotBlank
     @Size(max = 20)
-    private String first_name;
+    private String firstName;
 
     @NotBlank
     @Size(max = 20)
-    private String last_name;
+    private String lastName;
 
     @NotBlank
     @Size(max = 20)
-    private String phone_number;
+    private String phoneNumber;
 }

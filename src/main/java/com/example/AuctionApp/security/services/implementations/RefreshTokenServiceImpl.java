@@ -1,9 +1,10 @@
-package com.example.AuctionApp.security.services;
+package com.example.AuctionApp.security.services.implementations;
 
-import com.example.AuctionApp.exception.TokenRefreshException;
+import com.example.AuctionApp.exception.RefreshTokenException;
 import com.example.AuctionApp.models.RefreshToken;
 import com.example.AuctionApp.repository.RefreshTokenRepository;
 import com.example.AuctionApp.repository.UserRepository;
+import com.example.AuctionApp.security.services.interfaces.RefreshTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -14,7 +15,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class RefreshTokenService {
+public class RefreshTokenServiceImpl implements RefreshTokenService {
     @Value("${auction.app.jwtRefreshExpirationMs}")
     private Long refreshTokenDurationMs;
 
@@ -42,7 +43,7 @@ public class RefreshTokenService {
     public RefreshToken verifyExpiration(RefreshToken token) {
         if (token.getExpiryDate().compareTo(Instant.now()) < 0) {
             refreshTokenRepository.delete(token);
-            throw new TokenRefreshException(token.getToken(), "Refresh token was expired. Please make a new signin request");
+            throw new RefreshTokenException(token.getToken(), "Refresh token was expired. Please make a new signin request");
         }
 
         return token;
