@@ -88,36 +88,10 @@ public class UserAuthServiceImpl implements UserAuthService {
                     .body(new MessageResponse("Error: Email is already in use!"));
         }
 
-        final User user = new User(
-                signupRequest.getFirstName(),
-                signupRequest.getLastName(),
-                signupRequest.getEmail(),
-                encoder.encode(signupRequest.getPassword()),
-                signupRequest.getPhoneNumber()
-        );
+        final User user = getUser(signupRequest);
 
-        final Set<String> strRoles = signupRequest.getRole();
-        Set<Role> roles = new HashSet<>();
+        user.setRoles(getRoles(signupRequest.getRole()));
 
-        if (strRoles == null) {
-            final Role userRole = roleRepository.findByName(RolesEnum.ROLE_USER)
-                    .orElseThrow(() -> new RoleNotFoundException("Error: Role is not found."));
-            roles.add(userRole);
-        } else {
-            strRoles.forEach(role -> {
-                if ("seller".equals(role)) {
-                    final Role sellerRole = roleRepository.findByName(RolesEnum.ROLE_SELLER)
-                            .orElseThrow(() -> new RoleNotFoundException("Error: Role is not found."));
-                    roles.add(sellerRole);
-                } else {
-                    final Role userRole = roleRepository.findByName(RolesEnum.ROLE_USER)
-                            .orElseThrow(() -> new RoleNotFoundException("Error: Role is not found."));
-                    roles.add(userRole);
-                }
-            });
-        }
-
-        user.setRoles(roles);
         userRepository.save(user);
 
         return ResponseEntity.ok(new MessageResponse("User successfully registered"));
@@ -140,5 +114,39 @@ public class UserAuthServiceImpl implements UserAuthService {
     public ResponseEntity<?> logoutUser(LogOutRequest logOutRequest){
         refreshTokenService.deleteByUserId(logOutRequest.getUserId());
         return ResponseEntity.ok(new MessageResponse("Log out successful!"));
+    }
+
+    private User getUser(SignupRequest signupRequest){
+        return new User(
+                signupRequest.getFirstName(),
+                signupRequest.getLastName(),
+                signupRequest.getEmail(),
+                encoder.encode(signupRequest.getPassword()),
+                signupRequest.getPhoneNumber()
+        );
+    }
+
+    private Set<Role> getRoles(Set<String> strRoles){
+        Set<Role> roles = new HashSet<>();
+
+        if (strRoles == null) {
+            final Role userRole = roleRepository.findByName(RolesEnum.ROLE_USER)
+                    .orElseThrow(() -> new RoleNotFoundException("Error: Role is not found."));
+            roles.add(userRole);
+        } else {
+            strRoles.forEach(role -> {
+                if ("seller".equals(role)) {
+                    final Role sellerRole = roleRepository.findByName(RolesEnum.ROLE_SELLER)
+                            .orElseThrow(() -> new RoleNotFoundException("Error: Role is not found."));
+                    roles.add(sellerRole);
+                } else {
+                    final Role userRole = roleRepository.findByName(RolesEnum.ROLE_USER)
+                            .orElseThrow(() -> new RoleNotFoundException("Error: Role is not found."));
+                    roles.add(userRole);
+                }
+            });
+        }
+
+        return roles;
     }
 }
