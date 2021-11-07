@@ -5,10 +5,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @SpringBootApplication
-public class AuctionAppApplication {
+@EnableSwagger2
+public class AuctionApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(AuctionAppApplication.class, args);
+		SpringApplication.run(AuctionApplication.class, args);
 	}
 
 }
