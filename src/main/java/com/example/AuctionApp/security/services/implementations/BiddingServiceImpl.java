@@ -8,6 +8,7 @@ import com.example.AuctionApp.payload.response.MessageResponse;
 import com.example.AuctionApp.repository.BidRepository;
 import com.example.AuctionApp.repository.ItemRepository;
 import com.example.AuctionApp.repository.UserRepository;
+import com.example.AuctionApp.security.jwt.JwtUtils;
 import com.example.AuctionApp.security.services.interfaces.BiddingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -28,9 +29,12 @@ public class BiddingServiceImpl implements BiddingService {
     @Autowired
     UserRepository userRepository;
 
-    public ResponseEntity<?> placeBid(BidRequest request) {
-        final Item item = itemRepository.getById(request.getItemId());
-        final User user = userRepository.getById(request.getUserId());
+    @Autowired
+    JwtUtils jwtUtils;
+
+    public ResponseEntity<?> placeBid(BidRequest request, Long itemId, String jwt) {
+        final Item item = itemRepository.getById(itemId);
+        final User user = getUserDetails(jwt);
         final Instant date = new Date().toInstant();
 
         if(bidHasInvalidAmount(item, request.getAmount())){
@@ -45,11 +49,20 @@ public class BiddingServiceImpl implements BiddingService {
         return ResponseEntity.ok(new MessageResponse("Bid placed!"));
     }
 
+    public Integer countBids(Long itemId){
+        return bidRepository.countBids(itemId);
+    }
+
     private Boolean bidHasInvalidAmount(Item item, Float bidAmount){
-        return bidAmount < item.getStart_price() || bidAmount <= bidRepository.findLargestBid(item.getId());
+        return bidAmount < item.getStart_price() || bidAmount <= (bidRepository.findLargestBid(item.getId()));
     }
 
     private Boolean auctionEnded(Item item, Instant date){
         return  date.compareTo(item.getEnd_time()) > 0;
+    }
+
+    private User getUserDetails(String jwt){
+        String email = jwtUtils.getEmailFromJwtToken(jwt.substring(7));
+        return userRepository.findByEmail(email).get();
     }
 }

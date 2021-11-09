@@ -17,9 +17,16 @@ public class BidController {
     @Autowired
     BiddingService biddingService;
 
-    @PostMapping("/")
+    @PostMapping(path= "/place/{itemId}")
     @PreAuthorize("hasRole('SELLER')")
-    public ResponseEntity<?> placeBid(@Valid @RequestBody BidRequest request) {
-        return biddingService.placeBid(request);
+    public ResponseEntity<?> placeBid(@Valid @RequestBody BidRequest request,
+                                      @PathVariable("itemId") Long itemId,
+                                      @RequestHeader("Authorization") String jwt) {
+        return biddingService.placeBid(request, itemId, jwt);
+    }
+
+    @PostMapping(path = "/count/{itemId}")
+    public Integer countBids(@PathVariable("itemId") Long itemId){
+        return biddingService.countBids(itemId);
     }
 }

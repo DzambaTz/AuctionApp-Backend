@@ -10,7 +10,6 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 public class BidRequest {
-    private Long itemId;
     private Long userId;
     private Float amount;
 }
