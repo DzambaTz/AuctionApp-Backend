@@ -38,7 +38,7 @@ public class BiddingServiceImpl implements BiddingService {
         final Instant date = new Date().toInstant();
 
         if(bidHasInvalidAmount(item, request.getAmount())){
-            return ResponseEntity.badRequest().body(new MessageResponse("Your bid is smaller than or equal to the current max bid."));
+            return ResponseEntity.badRequest().body(new MessageResponse("There are higher bids than yours. You could give a second try!"));
         }
 
         if(auctionEnded(item,date)){
@@ -46,7 +46,7 @@ public class BiddingServiceImpl implements BiddingService {
         }
 
         bidRepository.save(new Bid(item,user, request.getAmount(), date));
-        return ResponseEntity.ok(new MessageResponse("Bid placed!"));
+        return ResponseEntity.ok(new MessageResponse("Congrats! You are the highest bidder"));
     }
 
     public Integer countBids(Long itemId){

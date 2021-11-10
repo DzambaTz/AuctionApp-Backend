@@ -27,6 +27,9 @@ public class Item {
     private String category;
     private String subcategory;
     private Float start_price;
+    @Column(
+            length = 1000
+    )
     private String description;
     private Instant start_time;
     private Instant end_time;
