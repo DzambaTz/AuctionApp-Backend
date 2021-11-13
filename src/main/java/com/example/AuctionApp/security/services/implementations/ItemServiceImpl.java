@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.time.LocalTime;
 
 @Service
 public class ItemServiceImpl implements ItemService {
@@ -26,14 +25,29 @@ public class ItemServiceImpl implements ItemService {
         final Item item = itemRepository.getById(itemId);
         final Float highestBid = bidRepository.findLargestBid(itemId);
         final Integer numberOfBids = bidRepository.countBids(itemId);
+        final Duration endOfAuction = timeLeftTillEndOfAuction(item);
 
         return ResponseEntity.ok(new ItemDataResponse(
                 item.getStart_price(),
                 highestBid,
                 numberOfBids,
-                Duration.between(item.getEnd_time(), Instant.now()),
+                endOfAuction,
                 item.getDescription(),
-                item.getName()
-                ));
+                item.getName(),
+                item.getImages()));
+    }
+
+    @Override
+    public ResponseEntity<?> getNewArrivals() {
+        return ResponseEntity.ok(itemRepository.getNewArrivals());
+    }
+
+    @Override
+    public ResponseEntity<?> getLastChanceItems() {
+        return ResponseEntity.ok(itemRepository.getLastChanceItems());
+    }
+
+    private Duration timeLeftTillEndOfAuction(Item item){
+        return item.getEnd_time().compareTo(Instant.now()) <= 0 ? Duration.ZERO : Duration.between(item.getEnd_time(), Instant.now());
     }
 }

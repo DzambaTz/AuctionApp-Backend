@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.Duration;
+import java.util.List;
 
 @Getter
 @Setter
@@ -16,4 +17,5 @@ public class ItemDataResponse {
     private Duration endTime;
     private String itemDescription;
     private String itemName;
+    private List<String> itemImages;
 }

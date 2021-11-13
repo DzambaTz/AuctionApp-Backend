@@ -105,6 +105,7 @@ public class UserAuthServiceImpl implements UserAuthService {
                 .map(RefreshToken::getUser)
                 .map(user -> {
                     final String token = jwtUtils.generateTokenFromEmail(user.getEmail());
+                    logger.error(token);
                     return ResponseEntity.ok(new RefreshTokenResponse(token, requestRefreshToken));
                 })
                 .orElseThrow(() -> new RefreshTokenException(requestRefreshToken,
