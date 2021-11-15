@@ -1,3 +1,11 @@
+/**
+ * AuthController is a class that provides API endpoints for user login, registration,
+ * logout, and JWT refreshing. All the actual logic is done inside the UserAuthService
+ * and this controller serves merely as a middleware.
+ *
+ * @author Tarik Dzambic
+ */
+
 package com.example.AuctionApp.controllers;
 
 import com.example.AuctionApp.payload.request.LogOutRequest;

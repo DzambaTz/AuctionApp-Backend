@@ -1,3 +1,10 @@
+/**
+ * RefreshTokenResponse is a class used for constructing response objects after
+ * a successful JWT refresh request.
+ *
+ * @author Tarik Dzambic
+ */
+
 package com.example.AuctionApp.payload.response;
 
 import lombok.Getter;

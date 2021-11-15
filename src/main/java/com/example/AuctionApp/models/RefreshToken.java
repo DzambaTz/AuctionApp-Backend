@@ -1,8 +1,13 @@
+/**
+ * RefreshToken class is a model for the refreshtoken database table.
+ *
+ * @author Tarik Dzambic
+ */
+
 package com.example.AuctionApp.models;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.Instant;

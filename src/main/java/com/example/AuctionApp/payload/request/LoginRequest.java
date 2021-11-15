@@ -1,7 +1,12 @@
+/**
+ * LoginRequest is a class used for mapping incoming login requests.
+ *
+ * @author Tarik Dzambic
+ */
+
 package com.example.AuctionApp.payload.request;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 

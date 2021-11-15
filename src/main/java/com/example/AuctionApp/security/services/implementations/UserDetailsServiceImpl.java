@@ -1,3 +1,11 @@
+/**
+ * UserDetailsServiceImpl is a class that implements the loadUserByUsername method,
+ * which tries to construct a User object from the passed username (email in our case)
+ * that is later used during the request and JWT filtering process.
+ *
+ * @author Tarik Dzambic
+ */
+
 package com.example.AuctionApp.security.services.implementations;
 
 import com.example.AuctionApp.models.User;

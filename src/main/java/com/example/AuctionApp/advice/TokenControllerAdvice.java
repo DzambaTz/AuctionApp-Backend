@@ -1,3 +1,11 @@
+/**
+ * TokenControllerAdvice class is an exception interceptor, that listens for RefreshTokenExceptions,
+ * and constructs an ErrorMessage response object that is then returned to the refresh token request
+ * sender.
+ *
+ * @author Tarik Dzambic
+ */
+
 package com.example.AuctionApp.advice;
 
 import java.util.Date;

@@ -1,3 +1,11 @@
+/**
+ * BidController is a class that provides API endpoints for the bidding process.
+ * Currently, there are endpoints for placing a new bid, and for fetching the
+ * number of bids on a specific item.
+ *
+ * @author Tarik Dzambic
+ */
+
 package com.example.AuctionApp.controllers;
 
 import com.example.AuctionApp.payload.request.BidRequest;

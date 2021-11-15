@@ -1,3 +1,9 @@
+/**
+ * JwtResponse class is used for constructing a response object after user signup/signin requests.
+ *
+ * @author Tarik Dzambic
+ */
+
 package com.example.AuctionApp.payload.response;
 
 import lombok.Getter;

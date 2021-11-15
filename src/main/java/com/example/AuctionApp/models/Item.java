@@ -1,3 +1,9 @@
+/**
+ * Item class is a model for the items database table.
+ *
+ * @author Tarik Dzambic
+ */
+
 package com.example.AuctionApp.models;
 
 import com.vladmihalcea.hibernate.type.array.ListArrayType;
@@ -34,13 +40,13 @@ public class Item {
     private String name;
     private String category;
     private String subcategory;
-    private Float start_price;
+    private Float startPrice;
     @Column(
             length = 1000
     )
     private String description;
-    private Instant start_time;
-    private Instant end_time;
+    private Instant startTime;
+    private Instant endTime;
     @Type(type = "list-array")
     @Column(
             name = "images",
@@ -48,15 +54,15 @@ public class Item {
     )
     private List<String> images;
 
-    public Item(User user, String name, String category, String subcategory, Float start_price, String description, Instant start_time, Instant end_time, List<String> images) {
+    public Item(User user, String name, String category, String subcategory, Float startPrice, String description, Instant startTime, Instant endTime, List<String> images) {
         this.user = user;
         this.name = name;
         this.category = category;
         this.subcategory = subcategory;
-        this.start_price = start_price;
+        this.startPrice = startPrice;
         this.description = description;
-        this.start_time = start_time;
-        this.end_time = end_time;
+        this.startTime = startTime;
+        this.endTime = endTime;
         this.images = images;
     }
 }

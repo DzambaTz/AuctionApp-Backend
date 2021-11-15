@@ -1,3 +1,11 @@
+/**
+ * UserAuthServiceImpl is a class that implements methods for the UserAuthService interface.
+ * It contains all the logic behind the user signup, signin, logout, and some logic behind
+ * JWT refreshing process.
+ *
+ * @author Tarik Dzambic
+ */
+
 package com.example.AuctionApp.security.services.implementations;
 
 import com.example.AuctionApp.exception.RefreshTokenException;

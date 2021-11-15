@@ -1,3 +1,9 @@
+/**
+ * SignupRequest is a class used for mapping of incoming user signup requests.
+ *
+ * @author Tarik Dzambic
+ */
+
 package com.example.AuctionApp.payload.request;
 
 import lombok.Getter;

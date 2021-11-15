@@ -1,3 +1,9 @@
+/**
+ * UserRepository is a JPA repository used for querying the users database table.
+ *
+ * @author Tarik Dzambic
+ */
+
 package com.example.AuctionApp.repository;
 
 import com.example.AuctionApp.models.User;

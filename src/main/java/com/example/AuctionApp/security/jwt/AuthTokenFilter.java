@@ -1,3 +1,13 @@
+/**
+ * AuthTokenFilter is a class that is called once per every request dispatch.
+ * It filters the incoming request, and provides authentication methods. After
+ * it completes the JWT authentication process, it passes the request on to the
+ * targeted controller, so the whole authentication process is completed before
+ * any request hits the actual service or controller.
+ *
+ * @author Tarik Dzambic
+ */
+
 package com.example.AuctionApp.security.jwt;
 
 import org.slf4j.Logger;

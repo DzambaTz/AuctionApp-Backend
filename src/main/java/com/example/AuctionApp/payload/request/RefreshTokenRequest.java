@@ -1,3 +1,9 @@
+/**
+ * RefreshTokenRequest is a class used for mapping incoming JWT refresh requests.
+ *
+ * @author Tarik Dzambic
+ */
+
 package com.example.AuctionApp.payload.request;
 
 import lombok.Getter;

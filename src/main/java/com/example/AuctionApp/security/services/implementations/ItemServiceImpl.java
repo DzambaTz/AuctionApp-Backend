@@ -1,3 +1,11 @@
+/**
+ * ItemServiceImpl is a class that implements methods for the ItemService interface.
+ * It contains all of the logic behind the item data fetching process, and it is the one
+ * that communicates with the ItemRepository.
+ *
+ * @author Tarik Dzambic
+ */
+
 package com.example.AuctionApp.security.services.implementations;
 
 import com.example.AuctionApp.models.Item;
@@ -28,7 +36,7 @@ public class ItemServiceImpl implements ItemService {
         final Duration endOfAuction = timeLeftTillEndOfAuction(item);
 
         return ResponseEntity.ok(new ItemDataResponse(
-                item.getStart_price(),
+                item.getStartPrice(),
                 highestBid,
                 numberOfBids,
                 endOfAuction,
@@ -48,6 +56,6 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private Duration timeLeftTillEndOfAuction(Item item){
-        return item.getEnd_time().compareTo(Instant.now()) <= 0 ? Duration.ZERO : Duration.between(item.getEnd_time(), Instant.now());
+        return item.getEndTime().compareTo(Instant.now()) <= 0 ? Duration.ZERO : Duration.between(item.getEndTime(), Instant.now());
     }
 }

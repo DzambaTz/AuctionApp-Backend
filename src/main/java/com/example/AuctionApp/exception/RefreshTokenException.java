@@ -1,3 +1,10 @@
+/**
+ * RefreshTokenException is a custom exception thrown during a JWT refresh request.
+ * If the sent refreshToken has expired, then a RefreshTokenException will be thrown.
+ *
+ * @author Tarik Dzambic
+ */
+
 package com.example.AuctionApp.exception;
 
 import org.springframework.http.HttpStatus;

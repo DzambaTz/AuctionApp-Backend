@@ -1,3 +1,9 @@
+/**
+ * ItemRepository is a JPA repository used to query the items database table.
+ *
+ * @author Tarik Dzambic
+ */
+
 package com.example.AuctionApp.repository;
 
 import com.example.AuctionApp.models.Item;

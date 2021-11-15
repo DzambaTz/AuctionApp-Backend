@@ -1,3 +1,10 @@
+/**
+ * ItemDataResponse is a class used for constructing response objects when responding
+ * item data GET requests.
+ *
+ * @author Tarik Dzambic
+ */
+
 package com.example.AuctionApp.payload.response;
 
 import lombok.AllArgsConstructor;

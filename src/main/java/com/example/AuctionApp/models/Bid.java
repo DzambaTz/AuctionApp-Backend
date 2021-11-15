@@ -1,3 +1,9 @@
+/**
+ * Bid class is a model for the bids database table.
+ *
+ * @author Tarik Dzambic
+ */
+
 package com.example.AuctionApp.models;
 
 import lombok.Getter;

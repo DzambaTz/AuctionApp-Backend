@@ -1,3 +1,9 @@
+/**
+ * ItemController is a class that provides API endpoints for item data fetching.
+ *
+ * @author Tarik Dzambic
+ */
+
 package com.example.AuctionApp.controllers;
 
 import com.example.AuctionApp.security.services.interfaces.ItemService;

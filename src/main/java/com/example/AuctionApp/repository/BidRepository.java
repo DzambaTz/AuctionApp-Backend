@@ -1,3 +1,9 @@
+/**
+ * BidRepository is a JPA repository used to query the bids database table.
+ *
+ * @author Tarik Dzambic
+ */
+
 package com.example.AuctionApp.repository;
 
 import com.example.AuctionApp.models.Bid;

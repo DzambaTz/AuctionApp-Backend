@@ -1,3 +1,11 @@
+/**
+ * SpringWebSecurityConfig is a class that contains all the configuration needed
+ * for our Spring Web Security setup. It configures the authentication pipeline and
+ * the password encoder used on user signup.
+ *
+ * @author Tarik Dzambic
+ */
+
 package com.example.AuctionApp.security;
 
 import org.springframework.beans.factory.annotation.Autowired;

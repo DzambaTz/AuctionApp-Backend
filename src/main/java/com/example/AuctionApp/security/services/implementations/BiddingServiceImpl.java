@@ -1,3 +1,11 @@
+/**
+ * BiddingServiceImpl is a class that implements methods for the BiddingService interface.
+ * It contains all of the logic behind the bidding process, and it is the one that communicates
+ * with the BidRepository.
+ *
+ * @author Tarik Dzambic
+ */
+
 package com.example.AuctionApp.security.services.implementations;
 
 import com.example.AuctionApp.models.Bid;
@@ -32,9 +40,10 @@ public class BiddingServiceImpl implements BiddingService {
     @Autowired
     JwtUtils jwtUtils;
 
+
     public ResponseEntity<?> placeBid(BidRequest request, Long itemId, String jwt) {
         final Item item = itemRepository.getById(itemId);
-        final User user = getUserDetails(jwt);
+        final User user =  jwtUtils.getUserDetailsFromJwt(jwt.substring(7));
         final Instant date = new Date().toInstant();
 
         if(bidHasInvalidAmount(item, request.getAmount())){
@@ -54,15 +63,10 @@ public class BiddingServiceImpl implements BiddingService {
     }
 
     private Boolean bidHasInvalidAmount(Item item, Float bidAmount){
-        return bidAmount < item.getStart_price() || bidAmount <= (bidRepository.findLargestBid(item.getId()));
+        return bidAmount < item.getStartPrice() || bidAmount <= (bidRepository.findLargestBid(item.getId()));
     }
 
     private Boolean auctionEnded(Item item, Instant date){
-        return  date.compareTo(item.getEnd_time()) > 0;
-    }
-
-    private User getUserDetails(String jwt){
-        String email = jwtUtils.getEmailFromJwtToken(jwt.substring(7));
-        return userRepository.findByEmail(email).get();
+        return  date.compareTo(item.getEndTime()) > 0;
     }
 }
