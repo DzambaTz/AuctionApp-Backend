@@ -14,7 +14,7 @@
 	<name>AuctionApp</name>
 	<description>AuctionApp is an e-commerce web application that provides consumer-to-consumer sales based entirely on bidding process.</description>
 	<properties>
-		<java.version>17</java.version>
+		<java.version>11</java.version>
 	</properties>
 	<dependencies>
 		<dependency>
