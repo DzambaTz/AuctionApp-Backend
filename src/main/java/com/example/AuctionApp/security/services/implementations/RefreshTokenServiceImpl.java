@@ -1,3 +1,11 @@
+/**
+ * RefreshTokenServiceImpl is a class that implements methods for the RefreshTokenService interface.
+ * It contains part of the logic behind the JWT refreshing process, and it is the one that communicates
+ * with the RefreshTokenRepository.
+ *
+ * @author Tarik Dzambic
+ */
+
 package com.example.AuctionApp.security.services.implementations;
 
 import com.example.AuctionApp.exception.RefreshTokenException;

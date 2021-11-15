@@ -1,3 +1,9 @@
+/**
+ * TestController is a class that was used during development to test user role functionality.
+ *
+ * @author Tarik Dzambic
+ */
+
 package com.example.AuctionApp.controllers;
 
 import org.springframework.security.access.prepost.PreAuthorize;

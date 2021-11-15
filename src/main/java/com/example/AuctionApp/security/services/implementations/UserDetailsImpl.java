@@ -1,5 +1,14 @@
+/**
+ * UserDetailsImpl is a class that provides the build method for construction
+ * of complete User objects, and provides a comparison method.
+ *
+ * @author Tarik Dzambic
+ */
+
 package com.example.AuctionApp.security.services.implementations;
 
+import com.example.AuctionApp.repository.UserRepository;
+import com.example.AuctionApp.security.jwt.JwtUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

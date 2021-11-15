@@ -1,3 +1,11 @@
+/**
+ * UserAuthServiceImpl is a class that implements methods for the UserAuthService interface.
+ * It contains all the logic behind the user signup, signin, logout, and some logic behind
+ * JWT refreshing process.
+ *
+ * @author Tarik Dzambic
+ */
+
 package com.example.AuctionApp.security.services.implementations;
 
 import com.example.AuctionApp.exception.RefreshTokenException;
@@ -105,6 +113,7 @@ public class UserAuthServiceImpl implements UserAuthService {
                 .map(RefreshToken::getUser)
                 .map(user -> {
                     final String token = jwtUtils.generateTokenFromEmail(user.getEmail());
+                    logger.error(token);
                     return ResponseEntity.ok(new RefreshTokenResponse(token, requestRefreshToken));
                 })
                 .orElseThrow(() -> new RefreshTokenException(requestRefreshToken,

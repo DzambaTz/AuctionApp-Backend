@@ -1,8 +1,18 @@
+/**
+ * JwtUtils is a class that provides basic methods for working with JWTs like
+ * generating, validating and parsing.
+ *
+ * @author Tarik Dzambic
+ */
+
 package com.example.AuctionApp.security.jwt;
 
+import com.example.AuctionApp.models.User;
+import com.example.AuctionApp.repository.UserRepository;
 import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import com.example.AuctionApp.security.services.implementations.UserDetailsImpl;
@@ -18,6 +28,9 @@ public class JwtUtils {
 
     @Value("${auction.app.jwtExpirationMs}")
     private int jwtExpirationMs;
+
+    @Autowired
+    UserRepository userRepository;
 
     public String generateJwtToken(UserDetailsImpl userPrincipal) {
         return generateTokenFromEmail(userPrincipal.getEmail());
@@ -53,5 +66,10 @@ public class JwtUtils {
         }
 
         return false;
+    }
+
+    public User getUserDetailsFromJwt(String jwt){
+        String email = getEmailFromJwtToken(jwt);
+        return userRepository.findByEmail(email).get();
     }
 }

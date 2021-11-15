@@ -1,3 +1,12 @@
+/**
+ * AuthEntryPointJwt is a class that allows the framework to send some
+ * sort of "to access this resource you must authenticate first" notification
+ * from this application server to the web client. Basically an authorization
+ * handler.
+ *
+ * @author Tarik Dzambic
+ */
+
 package com.example.AuctionApp.security.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;

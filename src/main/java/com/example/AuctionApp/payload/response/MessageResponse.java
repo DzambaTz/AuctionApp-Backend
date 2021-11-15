@@ -1,3 +1,9 @@
+/**
+ * MessageResponse is a class used for constructing basic message response objects.
+ *
+ * @author Tarik Dzambic
+ */
+
 package com.example.AuctionApp.payload.response;
 
 import lombok.AllArgsConstructor;

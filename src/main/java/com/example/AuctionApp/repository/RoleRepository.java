@@ -1,3 +1,9 @@
+/**
+ * RoleRepository is a JPA repository used for querying the roles database table.
+ *
+ * @author Tarik Dzambic
+ */
+
 package com.example.AuctionApp.repository;
 
 import com.example.AuctionApp.models.Role;

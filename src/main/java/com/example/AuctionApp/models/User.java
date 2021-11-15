@@ -1,3 +1,9 @@
+/**
+ * User class is a model for the users database table.
+ *
+ * @author Tarik Dzambic
+ */
+
 package com.example.AuctionApp.models;
 
 import lombok.Getter;

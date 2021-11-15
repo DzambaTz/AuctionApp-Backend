@@ -1,3 +1,9 @@
+/**
+ * Role class is a model for the roles database table.
+ *
+ * @author Tarik Dzambic
+ */
+
 package com.example.AuctionApp.models;
 
 import lombok.*;
