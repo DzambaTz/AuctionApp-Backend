@@ -10,6 +10,7 @@ package com.example.AuctionApp.security.services.implementations;
 
 import com.example.AuctionApp.models.Item;
 import com.example.AuctionApp.payload.response.ItemDataResponse;
+import com.example.AuctionApp.payload.response.MessageResponse;
 import com.example.AuctionApp.repository.BidRepository;
 import com.example.AuctionApp.repository.ItemRepository;
 import com.example.AuctionApp.security.services.interfaces.ItemService;
@@ -19,6 +20,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ItemServiceImpl implements ItemService {
@@ -57,5 +60,35 @@ public class ItemServiceImpl implements ItemService {
 
     private Duration timeLeftTillEndOfAuction(Item item){
         return item.getEndTime().compareTo(Instant.now()) <= 0 ? Duration.ZERO : Duration.between(item.getEndTime(), Instant.now());
+    }
+
+    @Override
+    public ResponseEntity<?> getFilteredItems(List<String> category, List<String> subcategory, Float minPrice, Float maxPrice, String search){
+        if(minPrice == 0 && maxPrice == 0){
+            minPrice = itemRepository.getMinPrice();
+            maxPrice = itemRepository.getMaxPrice();
+        }
+
+        if(category.isEmpty() && subcategory.isEmpty()){
+            category = itemRepository.getListOfCategories();
+            subcategory = itemRepository.getListOfSubcategories();
+        }
+
+        final List<Item> filteredItems = itemRepository.getFilteredItems(category,subcategory,minPrice,maxPrice,search);
+
+        if(filteredItems.isEmpty()){
+            return ResponseEntity.badRequest().body(new MessageResponse("No items match your filters!"));
+        }
+
+        return ResponseEntity.ok(filteredItems);
+    }
+
+    @Override
+    public ResponseEntity<?> getItemPriceLimits() {
+        List<Float> itemPrices = new ArrayList<>();
+        itemPrices.add(itemRepository.getMinPrice());
+        itemPrices.add(itemRepository.getMaxPrice());
+
+        return ResponseEntity.ok(itemPrices);
     }
 }

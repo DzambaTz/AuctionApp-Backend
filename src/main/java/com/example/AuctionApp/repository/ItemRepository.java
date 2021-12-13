@@ -24,4 +24,36 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
             nativeQuery = true
     )
     List<Item> getLastChanceItems();
+
+    @Query(
+            value = "SELECT id,category,description,end_time,name,start_price,start_time,subcategory,images, null as user_id FROM items " +
+                    "WHERE start_price >= :minPrice AND start_price <= :maxPrice AND name LIKE concat('%',:search ,'%') AND (category IN :category OR concat_ws('/',category ,subcategory) IN :subcategory )",
+            nativeQuery = true
+    )
+    List<Item> getFilteredItems(List<String> category, List<String> subcategory, Float minPrice, Float maxPrice, String search);
+
+    @Query(
+            value = "SELECT DISTINCT category FROM items",
+            nativeQuery = true
+    )
+    List<String> getListOfCategories();
+
+    @Query(
+            value = "SELECT DISTINCT concat_ws('/',category,subcategory) FROM items",
+    nativeQuery = true
+    )
+    List<String> getListOfSubcategories();
+
+    @Query(
+            value = "SELECT MIN(start_price) FROM items",
+            nativeQuery = true
+    )
+    Float getMinPrice();
+
+    @Query(
+            value = "SELECT MAX(start_price) FROM items",
+            nativeQuery = true
+    )
+    Float getMaxPrice();
+
 }
