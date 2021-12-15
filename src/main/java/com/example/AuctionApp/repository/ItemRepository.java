@@ -20,7 +20,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     @Query(
             value = "SELECT id,category,description,end_time,name,start_price,start_time,subcategory,images, null as user_id FROM items " +
                     "WHERE start_price >= :#{#searchItemRequest.minPrice} AND start_price <= :#{#searchItemRequest.maxPrice} " +
-                    "AND name LIKE concat('%',:#{#searchItemRequest.search} ,'%') AND (category IN :#{#searchItemRequest.category} " +
+                    "AND LOWER(name) LIKE concat('%',LOWER(:#{#searchItemRequest.search} ),'%') AND (category IN :#{#searchItemRequest.category} " +
                     "OR concat_ws('/',category ,subcategory) IN :#{#searchItemRequest.subcategory} )",
             nativeQuery = true
     )
