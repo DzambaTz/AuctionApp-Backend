@@ -1,7 +1,5 @@
 /**
- * UserDetailsServiceImpl is a class that implements the loadUserByUsername method,
- * which tries to construct a User object from the passed username (email in our case)
- * that is later used during the request and JWT filtering process.
+ * Default implementation for {@link UserDetailsService}
  *
  * @author Tarik Dzambic
  */

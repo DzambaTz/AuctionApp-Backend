@@ -6,6 +6,7 @@
 
 package com.example.AuctionApp.controllers;
 
+import com.example.AuctionApp.payload.request.SearchItemRequest;
 import com.example.AuctionApp.security.services.interfaces.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,18 +19,28 @@ public class ItemController {
     @Autowired
     ItemService itemService;
 
-    @GetMapping(path= "/{itemId}")
+    @GetMapping(path = "/{itemId}")
     public ResponseEntity<?> getItemData(@PathVariable("itemId") Long itemId) {
         return itemService.getItemData(itemId);
     }
 
     @GetMapping(path = "/newArrivals")
-    public ResponseEntity<?> getNewArrivals(){
+    public ResponseEntity<?> getNewArrivals() {
         return itemService.getNewArrivals();
     }
 
     @GetMapping(path = "/lastChance")
-    public ResponseEntity<?> getLastChanceItems(){
+    public ResponseEntity<?> getLastChanceItems() {
         return itemService.getLastChanceItems();
+    }
+
+    @GetMapping(path = "/search")
+    public ResponseEntity<?> getFilteredItems(SearchItemRequest searchItemRequest) {
+        return itemService.getFilteredItems(searchItemRequest);
+    }
+
+    @GetMapping(path = "/priceLimits")
+    public ResponseEntity<?> getItemPriceLimits(){
+        return itemService.getItemPriceLimits();
     }
 }
