@@ -1,7 +1,5 @@
 /**
- * RefreshTokenServiceImpl is a class that implements methods for the RefreshTokenService interface.
- * It contains part of the logic behind the JWT refreshing process, and it is the one that communicates
- * with the RefreshTokenRepository.
+ * Default implementation for {@link RefreshTokenService}
  *
  * @author Tarik Dzambic
  */

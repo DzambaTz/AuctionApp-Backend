@@ -7,30 +7,24 @@
 package com.example.AuctionApp.repository;
 
 import com.example.AuctionApp.models.Item;
+import com.example.AuctionApp.payload.request.SearchItemRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
 public interface ItemRepository extends JpaRepository<Item, Long> {
-    @Query(
-            value = "SELECT id,category,description,end_time,name,start_price,start_time,subcategory,images, null as user_id FROM items ORDER BY start_time DESC",
-            nativeQuery = true
-    )
-    List<Item> getNewArrivals();
-
-    @Query(
-            value = "SELECT id,category,description,end_time,name,start_price,start_time,subcategory,images, null as user_id FROM items ORDER BY end_time ASC",
-            nativeQuery = true
-    )
-    List<Item> getLastChanceItems();
+    List<Item> findAllByOrderByStartTimeDesc();
+    List<Item> findAllByOrderByStartTimeAsc();
 
     @Query(
             value = "SELECT id,category,description,end_time,name,start_price,start_time,subcategory,images, null as user_id FROM items " +
-                    "WHERE start_price >= :minPrice AND start_price <= :maxPrice AND name LIKE concat('%',:search ,'%') AND (category IN :category OR concat_ws('/',category ,subcategory) IN :subcategory )",
+                    "WHERE start_price >= :#{#searchItemRequest.minPrice} AND start_price <= :#{#searchItemRequest.maxPrice} " +
+                    "AND name LIKE concat('%',:#{#searchItemRequest.search} ,'%') AND (category IN :#{#searchItemRequest.category} " +
+                    "OR concat_ws('/',category ,subcategory) IN :#{#searchItemRequest.subcategory} )",
             nativeQuery = true
     )
-    List<Item> getFilteredItems(List<String> category, List<String> subcategory, Float minPrice, Float maxPrice, String search);
+    List<Item> getFilteredItems(SearchItemRequest searchItemRequest);
 
     @Query(
             value = "SELECT DISTINCT category FROM items",

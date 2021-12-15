@@ -1,7 +1,5 @@
 /**
- * BiddingServiceImpl is a class that implements methods for the BiddingService interface.
- * It contains all of the logic behind the bidding process, and it is the one that communicates
- * with the BidRepository.
+ * Default implementation for {@link BiddingService}
  *
  * @author Tarik Dzambic
  */

@@ -6,12 +6,11 @@
 
 package com.example.AuctionApp.controllers;
 
+import com.example.AuctionApp.payload.request.SearchItemRequest;
 import com.example.AuctionApp.security.services.interfaces.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -35,14 +34,9 @@ public class ItemController {
         return itemService.getLastChanceItems();
     }
 
-    @GetMapping(path = "/filter")
-    public ResponseEntity<?> getFilteredItems(@RequestParam(name = "category") List<String> category,
-                                              @RequestParam(name = "subcategory") List<String> subcategory,
-                                              @RequestParam(name = "minprice") Float minPrice,
-                                              @RequestParam(name = "maxprice") Float maxprice,
-                                              @RequestParam(name = "search") String search
-    ) {
-        return itemService.getFilteredItems(category,subcategory,minPrice,maxprice,search);
+    @GetMapping(path = "/search")
+    public ResponseEntity<?> getFilteredItems(SearchItemRequest searchItemRequest) {
+        return itemService.getFilteredItems(searchItemRequest);
     }
 
     @GetMapping(path = "/priceLimits")
