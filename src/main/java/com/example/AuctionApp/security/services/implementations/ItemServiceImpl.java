@@ -7,6 +7,7 @@
 package com.example.AuctionApp.security.services.implementations;
 
 import com.example.AuctionApp.models.Item;
+import com.example.AuctionApp.models.SortingCriterion;
 import com.example.AuctionApp.payload.request.SearchItemRequest;
 import com.example.AuctionApp.payload.response.ItemDataResponse;
 import com.example.AuctionApp.payload.response.MessageResponse;
@@ -14,6 +15,8 @@ import com.example.AuctionApp.repository.BidRepository;
 import com.example.AuctionApp.repository.ItemRepository;
 import com.example.AuctionApp.security.services.interfaces.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -56,7 +59,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ResponseEntity<?> getLastChanceItems() {
-        return ResponseEntity.ok(itemRepository.findAllByOrderByStartTimeAsc());
+        return ResponseEntity.ok(itemRepository.findAllByOrderByEndTimeAsc());
     }
 
     private Duration timeLeftTillEndOfAuction(Item item){
@@ -75,7 +78,7 @@ public class ItemServiceImpl implements ItemService {
             searchItemRequest.setSubcategory(itemRepository.getListOfSubcategories());
         }
 
-        final List<Item> filteredItems = itemRepository.getFilteredItems(searchItemRequest);
+        final List<Item> filteredItems = itemRepository.getFilteredItems(searchItemRequest, getSortingOrder(searchItemRequest.getSort()));
 
         if(CollectionUtils.isEmpty(filteredItems)){
             return ResponseEntity.badRequest().body(new MessageResponse("No items match your filters!"));
@@ -91,5 +94,21 @@ public class ItemServiceImpl implements ItemService {
         itemPrices.add(itemRepository.getMaxPrice());
 
         return ResponseEntity.ok(itemPrices);
+    }
+
+    private PageRequest getSortingOrder(Integer sortParameter){
+        final SortingCriterion sortingCriterion = new SortingCriterion();
+
+        if(sortParameter.equals(sortingCriterion.NEWNESS_SORT)){
+             return PageRequest.of(0,1000,Sort.Direction.DESC,"start_time");
+        } else if(sortParameter.equals(sortingCriterion.TIME_LEFT_SORT)){
+            return PageRequest.of(0,1000,Sort.Direction.DESC,"end_time");
+        } else if(sortParameter.equals(sortingCriterion.PRICE_DESC_SORT)){
+            return PageRequest.of(0,1000,Sort.Direction.DESC,"start_price");
+        } else if(sortParameter.equals(sortingCriterion.PRICE_ASC_SORT)){
+            return PageRequest.of(0,1000,Sort.Direction.ASC,"start_price");
+        } else {
+            return PageRequest.of(0,1000,Sort.Direction.ASC,"name");
+        }
     }
 }

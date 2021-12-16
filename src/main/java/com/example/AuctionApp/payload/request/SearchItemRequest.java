@@ -17,4 +17,5 @@ public class SearchItemRequest {
     Float minPrice;
     Float maxPrice;
     String search;
+    Integer sort;
 }
