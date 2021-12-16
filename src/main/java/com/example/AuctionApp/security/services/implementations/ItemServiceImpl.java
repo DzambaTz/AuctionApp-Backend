@@ -25,6 +25,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static com.example.AuctionApp.models.SortCriterion.*;
@@ -79,7 +80,7 @@ public class ItemServiceImpl implements ItemService {
             searchItemRequest.setSubcategory(itemRepository.getListOfSubcategories());
         }
 
-        final List<Item> filteredItems = itemRepository.getFilteredItems(searchItemRequest, getSortingOrder(searchItemRequest.getSort()));
+        final List<Item> filteredItems = itemRepository.getFilteredItems(searchItemRequest, getSortingOrder(searchItemRequest));
 
         if(CollectionUtils.isEmpty(filteredItems)){
             return ResponseEntity.badRequest().body(new MessageResponse("No items match your filters!"));
@@ -97,17 +98,27 @@ public class ItemServiceImpl implements ItemService {
         return ResponseEntity.ok(itemPrices);
     }
 
-    private PageRequest getSortingOrder(SortCriterion sortCriterionParameter){
-        if(sortCriterionParameter.equals(NEWNESS_SORT)){
-             return PageRequest.of(0,1000, Sort.Direction.DESC,"start_time");
-        } else if(sortCriterionParameter.equals(TIME_LEFT_SORT)){
-            return PageRequest.of(0,1000, Sort.Direction.DESC,"end_time");
-        } else if(sortCriterionParameter.equals(PRICE_DESC_SORT)){
-            return PageRequest.of(0,1000, Sort.Direction.DESC,"start_price");
-        } else if(sortCriterionParameter.equals(PRICE_ASC_SORT)){
-            return PageRequest.of(0,1000, Sort.Direction.ASC,"start_price");
-        } else {
-            return PageRequest.of(0,1000, Sort.Direction.ASC,"name");
+    private PageRequest getSortingOrder(SearchItemRequest searchItemRequest){
+        return PageRequest.of(
+                searchItemRequest.getPageNumber(),
+                searchItemRequest.getPageSize(),
+                Sort.Direction.fromString(searchItemRequest.getDirection().name()),
+                getSortByPropertyFromFilter(searchItemRequest)
+                );
+    }
+
+    private String getSortByPropertyFromFilter(SearchItemRequest searchItemRequest){
+        switch (searchItemRequest.getSortBy()){
+            case DEFAULT_SORT:
+                return "name";
+            case NEWNESS_SORT:
+                return "start_time";
+            case TIME_LEFT_SORT:
+                return "end_time";
+            case PRICE_SORT:
+                return "start_price";
+            default:
+                throw new IllegalArgumentException("Value " + searchItemRequest.getSortBy().toString() + "is not part of SortCriterion enum!");
         }
     }
 }
