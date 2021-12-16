@@ -7,7 +7,7 @@
 package com.example.AuctionApp.security.services.implementations;
 
 import com.example.AuctionApp.models.Item;
-import com.example.AuctionApp.models.SortingCriterion;
+import com.example.AuctionApp.models.SortCriterion;
 import com.example.AuctionApp.payload.request.SearchItemRequest;
 import com.example.AuctionApp.payload.response.ItemDataResponse;
 import com.example.AuctionApp.payload.response.MessageResponse;
@@ -27,9 +27,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.example.AuctionApp.models.SortCriterion.*;
+
 @Service
 public class ItemServiceImpl implements ItemService {
-
     @Autowired
     ItemRepository itemRepository;
 
@@ -96,19 +97,17 @@ public class ItemServiceImpl implements ItemService {
         return ResponseEntity.ok(itemPrices);
     }
 
-    private PageRequest getSortingOrder(Integer sortParameter){
-        final SortingCriterion sortingCriterion = new SortingCriterion();
-
-        if(sortParameter.equals(sortingCriterion.NEWNESS_SORT)){
-             return PageRequest.of(0,1000,Sort.Direction.DESC,"start_time");
-        } else if(sortParameter.equals(sortingCriterion.TIME_LEFT_SORT)){
-            return PageRequest.of(0,1000,Sort.Direction.DESC,"end_time");
-        } else if(sortParameter.equals(sortingCriterion.PRICE_DESC_SORT)){
-            return PageRequest.of(0,1000,Sort.Direction.DESC,"start_price");
-        } else if(sortParameter.equals(sortingCriterion.PRICE_ASC_SORT)){
-            return PageRequest.of(0,1000,Sort.Direction.ASC,"start_price");
+    private PageRequest getSortingOrder(SortCriterion sortCriterionParameter){
+        if(sortCriterionParameter.equals(NEWNESS_SORT)){
+             return PageRequest.of(0,1000, Sort.Direction.DESC,"start_time");
+        } else if(sortCriterionParameter.equals(TIME_LEFT_SORT)){
+            return PageRequest.of(0,1000, Sort.Direction.DESC,"end_time");
+        } else if(sortCriterionParameter.equals(PRICE_DESC_SORT)){
+            return PageRequest.of(0,1000, Sort.Direction.DESC,"start_price");
+        } else if(sortCriterionParameter.equals(PRICE_ASC_SORT)){
+            return PageRequest.of(0,1000, Sort.Direction.ASC,"start_price");
         } else {
-            return PageRequest.of(0,1000,Sort.Direction.ASC,"name");
+            return PageRequest.of(0,1000, Sort.Direction.ASC,"name");
         }
     }
 }

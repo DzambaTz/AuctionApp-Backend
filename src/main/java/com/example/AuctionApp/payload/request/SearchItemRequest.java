@@ -1,5 +1,6 @@
 package com.example.AuctionApp.payload.request;
 
+import com.example.AuctionApp.models.SortCriterion;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,5 +18,5 @@ public class SearchItemRequest {
     Float minPrice;
     Float maxPrice;
     String search;
-    Integer sort;
+    SortCriterion sort;
 }
