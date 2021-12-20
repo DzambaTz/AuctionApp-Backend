@@ -54,6 +54,31 @@ public class User {
     @Size(max = 30)
     private String phoneNumber;
 
+    private String profilePhoto;
+
+    private String gender;
+
+    private String dateOfBirth;
+
+    private String streetAddress;
+
+    private String city;
+
+    private String zipCode;
+
+    private String state;
+
+    private String country;
+
+    private String nameOnCard;
+
+    private String cardNumber;
+
+    private String expirationDate;
+
+    private String cvv;
+
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(	name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
