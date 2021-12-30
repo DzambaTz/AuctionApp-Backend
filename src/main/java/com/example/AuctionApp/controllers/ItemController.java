@@ -10,6 +10,7 @@ import com.example.AuctionApp.payload.request.SearchItemRequest;
 import com.example.AuctionApp.security.services.interfaces.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -42,5 +43,17 @@ public class ItemController {
     @GetMapping(path = "/priceLimits")
     public ResponseEntity<?> getItemPriceLimits(){
         return itemService.getItemPriceLimits();
+    }
+
+    @GetMapping(path = "/activeItems")
+    @PreAuthorize("hasRole('SELLER')")
+    public ResponseEntity<?> getUsersActiveItems(@RequestHeader("Authorization") String jwt) {
+        return itemService.getActiveUserItems(jwt);
+    }
+
+    @GetMapping(path = "/soldItems")
+    @PreAuthorize("hasRole('SELLER')")
+    public ResponseEntity<?> getUsersSoldItems(@RequestHeader("Authorization") String jwt){
+        return itemService.getSoldUserItems(jwt);
     }
 }

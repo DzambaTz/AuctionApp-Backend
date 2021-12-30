@@ -7,12 +7,14 @@
 package com.example.AuctionApp.security.services.implementations;
 
 import com.example.AuctionApp.models.Item;
-import com.example.AuctionApp.models.SortCriterion;
+import com.example.AuctionApp.models.User;
 import com.example.AuctionApp.payload.request.SearchItemRequest;
+import com.example.AuctionApp.payload.response.UserItemResponse;
 import com.example.AuctionApp.payload.response.ItemDataResponse;
 import com.example.AuctionApp.payload.response.MessageResponse;
 import com.example.AuctionApp.repository.BidRepository;
 import com.example.AuctionApp.repository.ItemRepository;
+import com.example.AuctionApp.security.jwt.JwtUtils;
 import com.example.AuctionApp.security.services.interfaces.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -21,14 +23,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import javax.persistence.Tuple;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-
-import static com.example.AuctionApp.models.SortCriterion.*;
+import java.util.*;
 
 @Service
 public class ItemServiceImpl implements ItemService {
@@ -37,6 +35,9 @@ public class ItemServiceImpl implements ItemService {
 
     @Autowired
     BidRepository bidRepository;
+
+    @Autowired
+    JwtUtils jwtUtils;
 
     public ResponseEntity<?> getItemData(Long itemId) {
         final Optional<Item> item = Optional.of(itemRepository.getById(itemId));
@@ -96,6 +97,36 @@ public class ItemServiceImpl implements ItemService {
         itemPrices.add(itemRepository.getMaxPrice());
 
         return ResponseEntity.ok(itemPrices);
+    }
+
+    @Override
+    public ResponseEntity<?> getActiveUserItems(String jwt) {
+        final User user =  jwtUtils.getUserDetailsFromJwt(jwt.substring(7));
+        List<Tuple> queryResult = itemRepository.getActiveUserItems(user.getId());
+        if(!queryResult.isEmpty()){
+            List<UserItemResponse> activeItems = new LinkedList<>();
+            for(Tuple t : queryResult){
+                activeItems.add(new UserItemResponse(t));
+            }
+            return ResponseEntity.ok(activeItems);
+        }else{
+            return ResponseEntity.noContent().build();
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> getSoldUserItems(String jwt) {
+        final User user =  jwtUtils.getUserDetailsFromJwt(jwt.substring(7));
+        List<Tuple> queryResult = itemRepository.getSoldUserItems(user.getId());
+        if(!queryResult.isEmpty()){
+            List<UserItemResponse> soldItems = new LinkedList<>();
+            for(Tuple t : queryResult){
+                soldItems.add(new UserItemResponse(t));
+            }
+            return ResponseEntity.ok(soldItems);
+        }else{
+            return ResponseEntity.noContent().build();
+        }
     }
 
     private PageRequest getSortingOrder(SearchItemRequest searchItemRequest){

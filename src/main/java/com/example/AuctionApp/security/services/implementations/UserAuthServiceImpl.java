@@ -73,6 +73,10 @@ public class UserAuthServiceImpl implements UserAuthService {
 
         final String jwt = jwtUtils.generateJwtToken(userDetails);
 
+        if(!userRepository.getUserStatus(userDetails.getId())){
+            return ResponseEntity.status(423).body(new MessageResponse("User account has been deactivated"));
+        }
+
         final List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
 

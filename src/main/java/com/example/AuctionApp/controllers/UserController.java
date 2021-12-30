@@ -34,4 +34,9 @@ public class UserController {
     public ResponseEntity<?> changePersonalInfo(@PathVariable("userId") Long userId, @RequestBody PersonalInfoChangeRequest body){
         return userDataService.changePersonalInfo(userId, body);
     }
+
+    @PutMapping(path = "/deactivate")
+    public ResponseEntity<?> deactivateUser(@RequestHeader("Authorization") String jwt){
+        return userDataService.deactivateUser(jwt);
+    }
 }

@@ -53,4 +53,18 @@ public interface UserRepository extends JpaRepository<User, Long> {
             nativeQuery = true
     )
     void changePersonalInfo(Long userId, PersonalInfoChangeRequest body);
+
+    @Modifying
+    @Transactional
+    @Query(
+            value = "UPDATE users SET is_active = false WHERE id = ?1",
+            nativeQuery = true
+    )
+    void deactivateUser(Long id);
+
+    @Query(
+            value = "SELECT is_active FROM users WHERE id = ?1",
+            nativeQuery = true
+    )
+    Boolean getUserStatus(Long id);
 }

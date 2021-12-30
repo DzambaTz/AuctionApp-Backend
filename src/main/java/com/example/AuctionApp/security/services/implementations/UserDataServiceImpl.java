@@ -6,6 +6,7 @@ import com.example.AuctionApp.payload.request.PhotoChangeRequest;
 import com.example.AuctionApp.payload.response.MessageResponse;
 import com.example.AuctionApp.payload.response.PersonalInfoResponse;
 import com.example.AuctionApp.repository.UserRepository;
+import com.example.AuctionApp.security.jwt.JwtUtils;
 import com.example.AuctionApp.security.services.interfaces.UserDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,9 @@ import java.util.Optional;
 public class UserDataServiceImpl implements UserDataService {
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    JwtUtils jwtUtils;
 
     @Override
     public ResponseEntity<?> getProfilePhoto(Long userId) {
@@ -42,5 +46,12 @@ public class UserDataServiceImpl implements UserDataService {
     public ResponseEntity<?> changePersonalInfo(Long userId, PersonalInfoChangeRequest body) {
         userRepository.changePersonalInfo(userId, body);
         return ResponseEntity.ok(new MessageResponse("Info successfully updated!"));
+    }
+
+    @Override
+    public ResponseEntity<?> deactivateUser(String jwt) {
+        final User user = jwtUtils.getUserDetailsFromJwt(jwt.substring(7));
+        userRepository.deactivateUser(user.getId());
+        return ResponseEntity.ok(new MessageResponse("User account successfully deactivated!"));
     }
 }

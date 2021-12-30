@@ -51,4 +51,8 @@ public interface ItemService {
      * @return List<Float> list with two entries: min and max price of items in database
      */
     ResponseEntity<?> getItemPriceLimits();
+
+    ResponseEntity<?> getActiveUserItems(String userId);
+
+    ResponseEntity<?> getSoldUserItems(String jwt);
 }

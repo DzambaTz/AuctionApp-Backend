@@ -11,6 +11,8 @@ import com.example.AuctionApp.models.Item;
 import com.example.AuctionApp.models.User;
 import com.example.AuctionApp.payload.request.BidRequest;
 import com.example.AuctionApp.payload.response.MessageResponse;
+import com.example.AuctionApp.payload.response.UserBidsItemResponse;
+import com.example.AuctionApp.payload.response.UserItemResponse;
 import com.example.AuctionApp.repository.BidRepository;
 import com.example.AuctionApp.repository.ItemRepository;
 import com.example.AuctionApp.repository.UserRepository;
@@ -20,8 +22,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.Tuple;
 import java.time.Instant;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 @Service
 public class BiddingServiceImpl implements BiddingService {
@@ -58,6 +63,22 @@ public class BiddingServiceImpl implements BiddingService {
 
     public Integer countBids(Long itemId){
         return bidRepository.countBids(itemId);
+    }
+
+    @Override
+    public ResponseEntity<?> getUserBids(String jwt) {
+        final User user =  jwtUtils.getUserDetailsFromJwt(jwt.substring(7));
+        List<Tuple> queryResult = bidRepository.getUserBids(user.getId());
+
+        if(!queryResult.isEmpty()){
+            List<UserBidsItemResponse> userBidItems = new LinkedList<>();
+            for(Tuple t : queryResult){
+                userBidItems.add(new UserBidsItemResponse(t));
+            }
+            return ResponseEntity.ok(userBidItems);
+        }else{
+            return ResponseEntity.noContent().build();
+        }
     }
 
     private Boolean bidHasInvalidAmount(Item item, Float bidAmount){

@@ -37,4 +37,10 @@ public class BidController {
     public Integer countBids(@PathVariable("itemId") Long itemId){
         return biddingService.countBids(itemId);
     }
+
+    @GetMapping(path = "/userBids")
+    @PreAuthorize("hasRole('SELLER')")
+    public ResponseEntity<?> getUserBids(@RequestHeader("Authorization") String jwt) {
+        return biddingService.getUserBids(jwt);
+    }
 }

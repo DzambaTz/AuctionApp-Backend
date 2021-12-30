@@ -18,4 +18,6 @@ public interface UserDataService {
     ResponseEntity<?> getPersonalInfo(Long userId);
 
     ResponseEntity<?> changePersonalInfo(Long userId, PersonalInfoChangeRequest body);
+
+    ResponseEntity<?> deactivateUser(String jwt);
 }

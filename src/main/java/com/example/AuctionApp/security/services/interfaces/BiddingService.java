@@ -28,4 +28,6 @@ public interface BiddingService {
      * @return Integer that represents the number of bids
      */
     Integer countBids(Long itemId);
+
+    ResponseEntity<?> getUserBids(String jwt);
 }
