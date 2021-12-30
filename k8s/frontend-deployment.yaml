@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: app
+spec:
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      initContainers:
+        - name: check-backend
+          image: busybox:1.31
+          command:
+            ['sh', '-c', 'until nc -z backend 8080; do echo waiting; sleep 2; done;']
+      containers:
+      - name: frontend
+        image: cloud.canister.io:5000/acibeee/auction-frontend
+        resources:
+          limits:
+            memory: "1024M"
+            cpu: "500m"
+        env:
+          - name: backend
+            value: backend
+        ports:
+        - containerPort: 3000
+        livenessProbe:
+          exec:
+            command:
+              - /bin/sh 
+              - -c
+              - nc -zv localhost 3000
+          initialDelaySeconds: 10
+          periodSeconds: 15
+          timeoutSeconds: 10
+      imagePullSecrets:
+        - name: canister

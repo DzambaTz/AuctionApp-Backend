@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: database
+  namespace: app
+data:
+  database: postgres.database
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend
+  namespace: app
+data:
+  backend: backend
