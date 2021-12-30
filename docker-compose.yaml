@@ -19,4 +19,3 @@ services:
     depends_on:
       - database
     restart: always
-  
