@@ -52,7 +52,20 @@ public interface ItemService {
      */
     ResponseEntity<?> getItemPriceLimits();
 
+    /**
+     * getActiveUserItems method returns a list of active items that a specific user posted,
+     * specified by the userId parameter.
+     *
+     * @param userId id of the user that we are fetching the active items for
+     * @return List<UserItemResponse> list of objects that contain data about the active items
+     */
     ResponseEntity<?> getActiveUserItems(String userId);
 
+    /**
+     * getSoldUserItems method returns a list of sold items (the auction period for them has finished).
+     *
+     * @param jwt JWT of the user trying to access his sold items
+     * @return List<Float> list with two entries: min and max price of items in database
+     */
     ResponseEntity<?> getSoldUserItems(String jwt);
 }

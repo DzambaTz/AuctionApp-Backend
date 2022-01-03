@@ -29,5 +29,12 @@ public interface BiddingService {
      */
     Integer countBids(Long itemId);
 
+    /**
+     * getUserBids method returns all of the bids a user placed and information about the
+     * items that the user has place the bids on
+     *
+     * @param jwt JWT of the user trying to access his bids
+     * @return List<UserBidsItemResponse> that contains the bidding and item data
+     */
     ResponseEntity<?> getUserBids(String jwt);
 }
