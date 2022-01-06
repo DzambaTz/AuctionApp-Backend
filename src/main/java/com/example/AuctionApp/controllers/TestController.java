@@ -6,6 +6,8 @@
 
 package com.example.AuctionApp.controllers;
 
+import com.example.AuctionApp.payload.response.MessageResponse;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +27,11 @@ public class TestController {
     @PreAuthorize("hasRole('SELLER')")
     public String userAccess() {
         return "Seller Content.";
+    }
+
+    @GetMapping("/status")
+    public ResponseEntity<MessageResponse> checkBackendStatus(){
+        return ResponseEntity.ok(new MessageResponse("Backend is online!"));
     }
 }
 
