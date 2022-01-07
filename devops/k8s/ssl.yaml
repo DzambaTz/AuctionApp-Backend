@@ -7,8 +7,8 @@ spec:
   acme:
     email: acibeee@gmail.com
     privateKeySecretRef:
-      name: letsencrypt-staging
-    server: https://acme-v02.api.letsencrypt.org/directory
+      name: letsencrypt-test
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
     solvers:
     - http01:
         ingress:
