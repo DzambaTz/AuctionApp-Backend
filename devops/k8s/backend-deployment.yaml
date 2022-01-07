@@ -33,11 +33,12 @@ spec:
         ports:
         - containerPort: 8080
         livenessProbe:
-          exec:
-            command:
-              - /bin/sh 
-              - -c
-              - nc -zv localhost 8080
+          httpGet:
+            path: /api/v1/status
+            port: 8080
+            httpHeaders:
+              - name: Test
+                value: Backend is online!
           initialDelaySeconds: 120
           periodSeconds: 15
           timeoutSeconds: 10
