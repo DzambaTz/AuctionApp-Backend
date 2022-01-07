@@ -4,6 +4,7 @@ metadata:
   name: database
   namespace: app
 data:
+  SPRING_DATASOURCE_URL: jdbc:postgresql://postgres.database:5432/postgres?createDatabaseIfNotExist=true
   database: postgres.database
 
 ---
