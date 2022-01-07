@@ -25,11 +25,11 @@ spec:
             ['sh', '-c', 'until pg_isready -h $database -p 5432; do echo waiting; sleep 2; done']
       containers:
       - name: backend
-        image: cloud.canister.io:5000/acibeee/auction-backend
+        image: abhpraksa.azurecr.io/backend
         resources:
           limits:
             memory: "2048M"
-            cpu: "1"
+            cpu: "0.75"
         ports:
         - containerPort: 8080
         livenessProbe:
@@ -45,5 +45,16 @@ spec:
         envFrom:
           - configMapRef:
               name: database
+        env:
+          - name: SPRING_DATASOURCE_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name:  postgres-pass
+                key: SPRING_DATASOURCE_USERNAME
+          - name: SPRING_DATASOURCE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: postgres-pass
+                key: SPRING_DATASOURCE_PASSWORD
       imagePullSecrets:
-        - name: canister
+        - name: azure
