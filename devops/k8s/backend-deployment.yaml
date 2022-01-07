@@ -44,17 +44,8 @@ spec:
           timeoutSeconds: 10
         envFrom:
           - configMapRef:
-              name: database
-        env:
-          - name: SPRING_DATASOURCE_USERNAME
-            valueFrom:
-              secretKeyRef:
-                name:  postgres-pass
-                key: SPRING_DATASOURCE_USERNAME
-          - name: SPRING_DATASOURCE_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: postgres-pass
-                key: SPRING_DATASOURCE_PASSWORD
+              name: backend-configmap
+          - secretRef:
+              name: backend-secret
       imagePullSecrets:
         - name: azure

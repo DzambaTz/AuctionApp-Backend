@@ -5,5 +5,5 @@ metadata:
   namespace: app
 type: Opaque
 data:
-  .dockerconfigjson: ewoJImF1dGhzIjogewoJCSJhYmhwcmFrc2EuYXp1cmVjci5pbyI6IHsKCQkJImF1dGgiOiAiUVVKSVVISmhhM05oT2tKaU9WRkxLemRZY0RCVWNIRk1WRzVVV1hCT1UwbEhablJtVTA1SGFXdEQiCgkJfQoJfQp9Cg==
+  .dockerconfigjson: <docker login>
 
