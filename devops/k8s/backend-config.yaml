@@ -4,4 +4,4 @@ metadata:
   name: backend-configmap
   namespace: app
 data:
-  SPRING_DATASOURCE_URL: jdbc:postgresql://ec2-52-206-193-199.compute-1.amazonaws.com:5432/d
+  SPRING_DATASOURCE_URL: jdbc:postgresql://ec2-52-206-193-199.compute-1.amazonaws.com:5432/dfhek9725r2i2o
