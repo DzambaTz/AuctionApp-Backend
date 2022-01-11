@@ -4,4 +4,4 @@ metadata:
   name: database
   namespace: app
 data:
-  database: postgresql://ec2-52-206-193-199.compute-1.amazonaws.com/dfhek9725r2i2o
+  database: ec2-52-206-193-199.compute-1.amazonaws.com
