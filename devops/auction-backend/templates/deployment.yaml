@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auction-backend
+  namespace: {{ .Values.metadata.namespace }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: auction-backend
+  template:
+    metadata:
+      labels:
+        app: auction-backend
+    spec:
+      initContainers:
+        - name: check-postgres
+          image: postgres
+          env:
+            - name: database
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-configmap
+                  key: database
+          command:
+            ['sh', '-c', 'until pg_isready -h $database -p 5432; do echo waiting; sleep 2; done']
+      containers:
+      - name: {{ .Values.image.container }}
+        image: {{ .Values.image.repository }}
+        resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+        ports:
+        - containerPort: {{ .Values.service.port }}
+        livenessProbe:
+          httpGet:
+            path: /api/v1/status
+            port: {{ .Values.service.port }}
+          initialDelaySeconds: 120
+          periodSeconds: 15
+          timeoutSeconds: 10
+        envFrom:
+          - configMapRef:
+              name: backend-configmap
+          - secretRef:
+              name: postgres-auth
+      imagePullSecrets:
+        - name: docker-login
