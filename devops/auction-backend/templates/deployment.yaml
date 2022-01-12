@@ -1,16 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: backend
-  namespace: app
+  name: auction-backend
+  namespace: {{ .Values.metadata.namespace }}
 spec:
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: backend
+      app: auction-backend
   template:
     metadata:
       labels:
-        app: backend
+        app: auction-backend
     spec:
       initContainers:
         - name: check-postgres
@@ -19,26 +20,21 @@ spec:
             - name: database
               valueFrom:
                 configMapKeyRef:
-                  name: database
+                  name: backend-configmap
                   key: database
           command:
             ['sh', '-c', 'until pg_isready -h $database -p 5432; do echo waiting; sleep 2; done']
       containers:
-      - name: backend
-        image: abhpraksa.azurecr.io/backend
+      - name: {{ .Values.image.container }}
+        image: {{ .Values.image.repository }}
         resources:
-          limits:
-            memory: "2048M"
-            cpu: "0.5"
+            {{- toYaml .Values.resources | nindent 12 }}
         ports:
-        - containerPort: 8080
+        - containerPort: {{ .Values.service.port }}
         livenessProbe:
           httpGet:
             path: /api/v1/status
-            port: 8080
-            httpHeaders:
-              - name: Test
-                value: Backend is online!
+            port: {{ .Values.service.port }}
           initialDelaySeconds: 120
           periodSeconds: 15
           timeoutSeconds: 10
@@ -46,6 +42,6 @@ spec:
           - configMapRef:
               name: backend-configmap
           - secretRef:
-              name: backend-secret
+              name: postgres-auth
       imagePullSecrets:
-        - name: azure
+        - name: docker-login
