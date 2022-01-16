@@ -24,6 +24,14 @@ If release name contains chart name it will be used as a full name.
 {{- end }}
 
 {{/*
+Annotations for ingress
+*/}}
+{{- define "auction-backend.annotations" -}}
+kubernetes.io/ingress.class: nginx
+cert-manager.io/cluster-issuer: "letsencrypt-staging"
+{{- end }}
+
+{{/*
 Create chart name and version as used by the chart label.
 */}}
 {{- define "auction-backend.chart" -}}
@@ -40,6 +48,11 @@ helm.sh/chart: {{ include "auction-backend.chart" . }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
+app.kubernetes.io/name: {{ include "auction-backend.name" . }}
+app.kubernetes.io/instance: backend
+app.kubernetes.io/component: backend
+app.kubernetes.io/part-of: app
+app.kubernetes.io/created-by: helm
 {{- end }}
 
 {{/*

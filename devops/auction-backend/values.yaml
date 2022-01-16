@@ -1,4 +1,3 @@
-
 # Default values for auction-backend.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
@@ -6,20 +5,28 @@
 replicaCount: 1
 
 metadata:
-  name:  backend
   namespace: app
 
 image:
   repository: abhpraksa.azurecr.io/backend
   # B64 encoded .docker/config.json
-  auth: <docker login b64>
+  auth: <docker login>
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
   container: backend
 
+init:
+  enabled: true
+
+liveness:
+  path: /api/v1/status
+  initDelay: 120
+  period: 15
+  timeout: 10
+
 imagePullSecrets: 
-  - name: azure
+  - name: docker-login
 nameOverride: ""
 fullnameOverride: ""
 
@@ -50,6 +57,18 @@ service:
   type: ClusterIP
   port: 8080
 
+ingress:
+  tls: 
+    - secret: backend-tls
+      hosts: 
+      - backend.racun.ninja
+  rules:
+    host: backend.racun.ninja
+    path: "/"
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: "letsencrypt-test"
+
 resources: 
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
@@ -78,5 +97,5 @@ affinity: {}
 global:
   username: <username>
   password: <pass>
-  database: <full db url>
-  url: <db url>
+  database: <full path>
+  url: <url>

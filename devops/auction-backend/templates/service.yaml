@@ -3,9 +3,11 @@ kind: Service
 metadata:
   name: {{ .Values.service.name }}
   namespace: {{ .Values.metadata.namespace }}
+  labels: 
+    {{- include "auction-backend.labels" . | nindent 4 }}
 spec:
   selector:
-    app: auction-backend
+    app: {{ include "auction-backend.name" . }}
   ports:
   - port: {{ .Values.service.port }}
     targetPort: {{ .Values.service.port }}
