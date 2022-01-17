@@ -19,11 +19,17 @@ image:
 init:
   enabled: true
 
-liveness:
-  path: /api/v1/status
-  initDelay: 120
-  period: 15
-  timeout: 10
+probes:
+  livenessProbe:
+    httpGet:
+      path: /api/v1/status
+      port: 8080
+      httpHeaders:
+       - name: Test
+         value: Backend is online!
+    initialDelaySeconds: 20
+    periodSeconds: 25
+    timeoutSeconds: 20
 
 imagePullSecrets: 
   - name: docker-login
@@ -58,13 +64,17 @@ service:
   port: 8080
 
 ingress:
+  enabled: true
   tls: 
-    - secret: backend-tls
+    - secret: backend-auction-tls
       hosts: 
-      - backend.racun.ninja
+      - auction-backend.racun.ninja
   rules:
-    host: backend.racun.ninja
-    path: "/"
+  - host: auction-backend.racun.ninja
+    http:
+      paths:
+      - pathType: Prefix
+        path: /
   annotations:
     kubernetes.io/ingress.class: nginx
     cert-manager.io/cluster-issuer: "letsencrypt-test"

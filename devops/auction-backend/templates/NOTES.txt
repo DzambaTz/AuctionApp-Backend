@@ -1,1 +1,4 @@
-Backend is now live at https://{{ .Values.ingress.rules.host }}
+Backend is now live at:
+{{- range .Values.ingress.rules }}
+https://{{ .host }}
+{{- end }}
