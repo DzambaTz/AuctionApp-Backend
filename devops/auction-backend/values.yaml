@@ -5,7 +5,7 @@
 replicaCount: 1
 
 metadata:
-  namespace: app
+  namespace: auction
 
 image:
   repository: abhpraksa.azurecr.io/backend
@@ -105,7 +105,7 @@ tolerations: []
 affinity: {}
 
 global:
-  username: <username>
+  username: <user>
   password: <pass>
-  database: <full path>
-  url: <url>
+  database: <full url>
+  url: <db url>
