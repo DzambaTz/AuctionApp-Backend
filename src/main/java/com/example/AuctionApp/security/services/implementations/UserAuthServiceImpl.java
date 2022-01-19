@@ -14,8 +14,8 @@ import com.example.AuctionApp.models.RolesEnum;
 import com.example.AuctionApp.models.User;
 import com.example.AuctionApp.payload.request.LogOutRequest;
 import com.example.AuctionApp.payload.request.LoginRequest;
-import com.example.AuctionApp.payload.request.SignupRequest;
 import com.example.AuctionApp.payload.request.RefreshTokenRequest;
+import com.example.AuctionApp.payload.request.SignupRequest;
 import com.example.AuctionApp.payload.response.JwtResponse;
 import com.example.AuctionApp.payload.response.MessageResponse;
 import com.example.AuctionApp.payload.response.RefreshTokenResponse;
@@ -63,7 +63,7 @@ public class UserAuthServiceImpl implements UserAuthService {
     @Autowired
     RefreshTokenService refreshTokenService;
 
-    public ResponseEntity<?> signInUser(LoginRequest loginRequest){
+    public ResponseEntity<?> signInUser(LoginRequest loginRequest) {
         final Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
 
@@ -73,7 +73,7 @@ public class UserAuthServiceImpl implements UserAuthService {
 
         final String jwt = jwtUtils.generateJwtToken(userDetails);
 
-        if(!userRepository.getUserStatus(userDetails.getId())){
+        if (!userRepository.getUserStatus(userDetails.getId())) {
             return ResponseEntity.status(423).body(new MessageResponse("User account has been deactivated"));
         }
 
@@ -91,7 +91,7 @@ public class UserAuthServiceImpl implements UserAuthService {
                 roles));
     }
 
-    public ResponseEntity<?> signUpUser(SignupRequest signupRequest){
+    public ResponseEntity<MessageResponse> signUpUser(SignupRequest signupRequest) {
         if (userRepository.existsByEmail(signupRequest.getEmail())) {
             return ResponseEntity
                     .badRequest()
@@ -107,7 +107,7 @@ public class UserAuthServiceImpl implements UserAuthService {
         return ResponseEntity.ok(new MessageResponse("User successfully registered"));
     }
 
-    public ResponseEntity<?> refreshUserToken(RefreshTokenRequest request){
+    public RefreshTokenResponse refreshUserToken(RefreshTokenRequest request) {
         final String requestRefreshToken = request.getRefreshToken();
 
         return refreshTokenService.findByToken(requestRefreshToken)
@@ -116,18 +116,18 @@ public class UserAuthServiceImpl implements UserAuthService {
                 .map(user -> {
                     final String token = jwtUtils.generateTokenFromEmail(user.getEmail());
                     logger.error(token);
-                    return ResponseEntity.ok(new RefreshTokenResponse(token, requestRefreshToken));
+                    return new RefreshTokenResponse(token, requestRefreshToken);
                 })
                 .orElseThrow(() -> new RefreshTokenException(requestRefreshToken,
                         "Refresh token is not in database!"));
     }
 
-    public ResponseEntity<?> logoutUser(LogOutRequest logOutRequest){
+    public MessageResponse logoutUser(LogOutRequest logOutRequest) {
         refreshTokenService.deleteByUserId(logOutRequest.getUserId());
-        return ResponseEntity.ok(new MessageResponse("Log out successful!"));
+        return new MessageResponse("Log out successful!");
     }
 
-    private User getUser(SignupRequest signupRequest){
+    private User getUser(SignupRequest signupRequest) {
         return new User(
                 signupRequest.getFirstName(),
                 signupRequest.getLastName(),
@@ -137,7 +137,7 @@ public class UserAuthServiceImpl implements UserAuthService {
         );
     }
 
-    private Set<Role> getRoles(Set<String> strRoles){
+    private Set<Role> getRoles(Set<String> strRoles) {
         Set<Role> roles = new HashSet<>();
 
         if (strRoles == null) {

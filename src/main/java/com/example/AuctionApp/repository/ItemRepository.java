@@ -8,6 +8,7 @@ package com.example.AuctionApp.repository;
 
 import com.example.AuctionApp.models.Item;
 import com.example.AuctionApp.payload.request.SearchItemRequest;
+import com.example.AuctionApp.payload.response.UserItemResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -53,18 +54,18 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     Float getMaxPrice();
 
     @Query(
-            value = "SELECT items.id, images[1],name,cast((end_time - now()) as varchar) AS time_left,start_price, COUNT(DISTINCT bids.id)\n" +
-                    "AS number_of_bids, COALESCE(MAX(DISTINCT bids.amount),0) AS max_bid FROM items LEFT OUTER JOIN bids " +
+            value = "SELECT items.id as itemId, images[1] as imageUrl,name,cast((end_time - now()) as varchar) AS timeLeft,start_price as startPrice, " +
+                    "COUNT(DISTINCT bids.id) AS numberOfBids, COALESCE(MAX(DISTINCT bids.amount),0) AS highestBid FROM items LEFT OUTER JOIN bids " +
                     "ON items.id = bids.item_id WHERE end_time > now() AND items.user_id = ?1 GROUP BY items.id",
             nativeQuery = true
     )
-    List<Tuple> getActiveUserItems(Long userId);
+    List<UserItemResponse> getActiveUserItems(Long userId);
 
     @Query(
-            value = "SELECT items.id, images[1],name,NULL AS time_left,start_price, COUNT(DISTINCT bids.id)\n" +
-                    "AS number_of_bids, COALESCE(MAX(DISTINCT bids.amount),0) AS max_bid FROM items LEFT OUTER JOIN bids " +
+            value = "SELECT items.id as itemId, images[1] as imageUrl,name,NULL AS timeLeft,start_price as startPrice, COUNT(DISTINCT bids.id)\n" +
+                    "AS numberOfBids, COALESCE(MAX(DISTINCT bids.amount),0) AS highestBid FROM items LEFT OUTER JOIN bids " +
                     "ON items.id = bids.item_id WHERE end_time < now() AND items.user_id = ?1 GROUP BY items.id",
             nativeQuery = true
     )
-    List<Tuple> getSoldUserItems(Long userId);
+    List<UserItemResponse> getSoldUserItems(Long userId);
 }

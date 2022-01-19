@@ -13,8 +13,6 @@ import lombok.ToString;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,7 +20,7 @@ import java.util.Set;
 @Table(name = "users",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = "email"),
-                @UniqueConstraint(columnNames = "phoneNumber")
+                @UniqueConstraint(columnNames = "phone_number")
         })
 @Getter
 @Setter
@@ -33,56 +31,64 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
-    @Size(max = 20)
+    @Column(name = "first_name", nullable = false)
     private String firstName;
 
-    @NotBlank
-    @Size(max = 20)
+    @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @NotBlank
-    @Size(max = 50)
     @Email
+    @Column(name = "email", nullable = false)
     private String email;
 
-    @NotBlank
-    @Size(max = 50)
+    @Column(name = "password", nullable = false)
     private String password;
 
-    @NotBlank
-    @Size(max = 30)
+    @Column(name = "phone_number")
     private String phoneNumber;
 
+    @Column(name = "profile_photo")
     private String profilePhoto;
 
+    @Column(name = "gender")
     private String gender;
 
+    @Column(name = "date_of_birth")
     private String dateOfBirth;
 
+    @Column(name = "street_address")
     private String streetAddress;
 
+    @Column(name = "city")
     private String city;
 
+    @Column(name = "zip_code")
     private String zipCode;
 
+    @Column(name = "state")
     private String state;
 
+    @Column(name = "country")
     private String country;
 
+    @Column(name = "name_on_card")
     private String nameOnCard;
 
+    @Column(name = "card_number")
     private String cardNumber;
 
+    @Column(name = "expiration_date")
     private String expirationDate;
 
+    @Column(name = "cvv")
     private String cvv;
 
+    @Column(name = "is_active")
     private Boolean isActive = true;
 
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(	name = "user_roles",
+    @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();

@@ -12,6 +12,8 @@ import com.example.AuctionApp.payload.request.LogOutRequest;
 import com.example.AuctionApp.payload.request.LoginRequest;
 import com.example.AuctionApp.payload.request.RefreshTokenRequest;
 import com.example.AuctionApp.payload.request.SignupRequest;
+import com.example.AuctionApp.payload.response.MessageResponse;
+import com.example.AuctionApp.payload.response.RefreshTokenResponse;
 import com.example.AuctionApp.security.services.interfaces.UserAuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -26,23 +28,23 @@ public class AuthController {
     @Autowired
     UserAuthService userAuthService;
 
-    @PostMapping("/signin")
+    @PostMapping("/sign-in")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         return userAuthService.signInUser(loginRequest);
     }
 
-    @PostMapping("/signup")
+    @PostMapping("/sign-up")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
-       return userAuthService.signUpUser(signUpRequest);
+        return userAuthService.signUpUser(signUpRequest);
     }
 
-    @PostMapping("/refreshtoken")
-    public ResponseEntity<?> refreshToken(@Valid @RequestBody RefreshTokenRequest request) {
-        return userAuthService.refreshUserToken(request);
+    @PostMapping("/refresh-token")
+    public ResponseEntity<RefreshTokenResponse> refreshToken(@Valid @RequestBody RefreshTokenRequest request) {
+        return ResponseEntity.ok(userAuthService.refreshUserToken(request));
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logoutUser(@Valid @RequestBody LogOutRequest logOutRequest) {
-        return userAuthService.logoutUser(logOutRequest);
+    public ResponseEntity<MessageResponse> logoutUser(@Valid @RequestBody LogOutRequest logOutRequest) {
+        return ResponseEntity.ok(userAuthService.logoutUser(logOutRequest));
     }
 }

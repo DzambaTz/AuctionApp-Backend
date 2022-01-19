@@ -7,12 +7,12 @@
 package com.example.AuctionApp.security.services.implementations;
 
 import com.example.AuctionApp.models.User;
+import com.example.AuctionApp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
-import com.example.AuctionApp.repository.UserRepository;
 
 import javax.transaction.Transactional;
 

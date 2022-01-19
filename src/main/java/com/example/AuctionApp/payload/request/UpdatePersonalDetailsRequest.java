@@ -3,11 +3,13 @@ package com.example.AuctionApp.payload.request;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
 @AllArgsConstructor
-public class PersonalInfoChangeRequest {
+@ToString
+public class UpdatePersonalDetailsRequest {
     private String firstName;
     private String lastName;
     private String phoneNumber;
@@ -22,4 +24,5 @@ public class PersonalInfoChangeRequest {
     private String cardNumber;
     private String expirationDate;
     private String cvv;
+    private String profilePhotoUrl;
 }
