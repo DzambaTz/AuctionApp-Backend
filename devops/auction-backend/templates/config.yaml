@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-configmap
+  namespace: {{ .Values.metadata.namespace }}
+data:
+  SPRING_DATASOURCE_URL: {{ .Values.global.database }}
+  database: {{ .Values.global.url }}
+  # SPRING_DATASOURCE_URL: jdbc:postgresql://{{ .Values.global.url }}:5432/dfhek9725r2i2o {{ .Values.global.database }}
