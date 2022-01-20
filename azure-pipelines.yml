@@ -1,0 +1,113 @@
+# Deploy to Azure Kubernetes Service
+# Build and push image to Azure Container Registry; Deploy to Azure Kubernetes Service
+# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+
+trigger:
+- main
+
+pr:
+- main
+
+resources:
+- repo: self
+
+variables:
+
+  # Container registry service connection established during pipeline creation
+  dockerRegistryServiceConnection: 'd1b1c11d-2d20-4a16-90ca-f8cfc07514b7'
+  imageRepository: 'auctionbackend'
+  containerRegistry: 'abhpraksa.azurecr.io'
+  dockerfilePath: '**/Dockerfile'
+  tag: '$(Build.BuildId)'
+  imagePullSecret: 'abhpraksa14698b6f-auth'
+
+  # Agent VM image name
+  vmImageName: 'ubuntu-latest'
+
+
+stages:
+- stage: Compile
+  displayName: Compile stage
+  jobs:
+  - deployment: Compile
+    displayName: Compile
+    pool:
+      vmImage: $(vmImageName)
+    environment: 'AcibeeeAuctionAppBackend.auction'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: Maven@3
+            inputs:
+              mavenPomFile: 'pom.xml'
+              publishJUnitResults: false
+              javaHomeOption: 'JDKVersion'
+              mavenVersionOption: 'Default'
+              mavenAuthenticateFeed: false
+              effectivePomSkip: false
+              sonarQubeRunAnalysis: false
+
+- stage: Build
+  displayName: Build stage
+  dependsOn: Compile
+  jobs:
+  - job: Build
+    displayName: Build
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: Docker@2
+      displayName: Build and push an image to container registry
+      inputs:
+        command: buildAndPush
+        repository: $(imageRepository)
+        dockerfile: $(dockerfilePath)
+        containerRegistry: $(dockerRegistryServiceConnection)
+        tags: |
+          $(tag)
+
+    - upload: manifests
+      artifact: manifests
+
+- stage: Package
+  displayName: Package stage
+  dependsOn: Build
+  jobs:
+  - deployment: Package
+    displayName: Package
+    pool:
+      vmImage: $(vmImageName)
+    environment: 'AcibeeeAuctionAppBackend.auction'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: HelmDeploy@0
+            inputs:
+              command: 'package'
+              chartPath: './devops/auction-backend'
+
+- stage: Deploy
+  displayName: Deploy stage
+  dependsOn: Package
+  jobs:
+  - deployment: Deploy
+    displayName: Deploy
+    pool:
+      vmImage: $(vmImageName)
+    environment: 'AcibeeeAuctionAppBackend.auction'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: HelmDeploy@0
+            inputs:
+              connectionType: 'Azure Resource Manager'
+              azureSubscription: 'Azure subscription 1(aea3f23c-28cc-46da-bf0e-b2907a086bef)'
+              azureResourceGroup: 'ABH-Praksa'
+              kubernetesCluster: 'ABH-Praksa'
+              namespace: 'auction'
+              command: 'upgrade'
+              chartType: 'FilePath'
+              chartPath: './devops/'
