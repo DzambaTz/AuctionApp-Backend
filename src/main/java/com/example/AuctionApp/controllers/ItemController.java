@@ -9,6 +9,7 @@ package com.example.AuctionApp.controllers;
 import com.example.AuctionApp.models.Item;
 import com.example.AuctionApp.payload.request.SearchItemRequest;
 import com.example.AuctionApp.payload.response.ItemDataResponse;
+import com.example.AuctionApp.payload.response.MessageResponse;
 import com.example.AuctionApp.payload.response.UserItemResponse;
 import com.example.AuctionApp.security.services.implementations.UserDetailsImpl;
 import com.example.AuctionApp.security.services.interfaces.ItemService;
@@ -62,5 +63,12 @@ public class ItemController {
     @PreAuthorize("hasRole('SELLER')")
     public ResponseEntity<List<UserItemResponse>> getUsersSoldItems(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.ok(itemService.getSoldUserItems(userDetails.getId()));
+    }
+
+    @PostMapping("/new-item")
+    @PreAuthorize("hasRole('SELLER')")
+    public ResponseEntity<MessageResponse> postNewItem(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody Item item) {
+        itemService.addNewItem(userDetails.getId(), item);
+        return ResponseEntity.ok(new MessageResponse("Item posted!"));
     }
 }

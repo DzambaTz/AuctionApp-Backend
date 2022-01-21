@@ -13,11 +13,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import javax.persistence.Tuple;
 import java.util.List;
 
 public interface ItemRepository extends JpaRepository<Item, Long> {
     List<Item> findAllByOrderByStartTimeDesc();
+
     List<Item> findAllByOrderByEndTimeAsc();
 
     @Query(
@@ -37,7 +37,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 
     @Query(
             value = "SELECT DISTINCT concat_ws('/',category,subcategory) FROM items",
-    nativeQuery = true
+            nativeQuery = true
     )
     List<String> getListOfSubcategories();
 
@@ -68,4 +68,8 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
             nativeQuery = true
     )
     List<UserItemResponse> getSoldUserItems(Long userId);
+
+    default void addNewItem(Item item) {
+        save(item);
+    }
 }

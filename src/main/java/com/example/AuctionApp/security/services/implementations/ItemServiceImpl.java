@@ -7,12 +7,14 @@
 package com.example.AuctionApp.security.services.implementations;
 
 import com.example.AuctionApp.models.Item;
+import com.example.AuctionApp.models.User;
 import com.example.AuctionApp.payload.request.SearchItemRequest;
 import com.example.AuctionApp.payload.response.ItemDataResponse;
 import com.example.AuctionApp.payload.response.MessageResponse;
 import com.example.AuctionApp.payload.response.UserItemResponse;
 import com.example.AuctionApp.repository.BidRepository;
 import com.example.AuctionApp.repository.ItemRepository;
+import com.example.AuctionApp.repository.UserRepository;
 import com.example.AuctionApp.security.jwt.JwtUtils;
 import com.example.AuctionApp.security.services.interfaces.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,9 @@ public class ItemServiceImpl implements ItemService {
 
     @Autowired
     BidRepository bidRepository;
+
+    @Autowired
+    UserRepository userRepository;
 
     @Autowired
     JwtUtils jwtUtils;
@@ -107,6 +112,16 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<UserItemResponse> getSoldUserItems(Long userId) {
         return itemRepository.getSoldUserItems(userId);
+    }
+
+    @Override
+    public void addNewItem(Long userId, Item item) {
+        final Optional<User> user = userRepository.findUsersById(userId);
+        if (user.isPresent()) {
+            item.setUser(user.get());
+            System.out.println(item);
+            itemRepository.addNewItem(item);
+        }
     }
 
     private PageRequest getSortingOrder(SearchItemRequest searchItemRequest) {

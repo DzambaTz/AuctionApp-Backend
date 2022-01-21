@@ -73,4 +73,6 @@ public interface ItemService {
      * @return List<Float> list with two entries: min and max price of items in database
      */
     List<UserItemResponse> getSoldUserItems(Long userId);
+
+    void addNewItem(Long userId, Item item);
 }
