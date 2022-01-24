@@ -42,3 +42,4 @@ steps:
       chartPath: '$(Build.ArtifactStagingDirectory)/auction-backend-0.1.0.tgz'
       force: true
       arguments: '--create-namespace --set image.auth=$(DOCKER_AUTH) --set global.username=$(PSQL_USER) --set global.password=$(PSQL_PASS) --set global.database=$(PSQL_URL) --set global.url=$(PSQL_INIT)'
+      
