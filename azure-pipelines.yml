@@ -1,0 +1,44 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+pr:
+- master
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+  - script: SONAR_TOKEN=$(SONAR_TOKEN) SPRING_DATASOURCE_URL=$(PSQL_URL) SPRING_DATASOURCE_USERNAME=$(PSQL_USER) SPRING_DATASOURCE_PASSWORD=$(PSQL_PASS) mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Acibeee_azure-backend
+    displayName: SonarCloud Check
+  - script: SPRING_DATASOURCE_URL=$(PSQL_URL) SPRING_DATASOURCE_USERNAME=$(PSQL_USER) SPRING_DATASOURCE_PASSWORD=$(PSQL_PASS) mvn package
+    displayName: Compile
+  - task: Docker@2
+    displayName: Build
+    inputs:
+      containerRegistry: 'ABHPraksa'
+      repository: 'auction-backend'
+      command: 'buildAndPush'
+      Dockerfile: '**/Dockerfile'
+  - task: HelmDeploy@0
+    displayName: Package
+    inputs:
+      command: 'package'
+      chartPath: './devops/auction-backend'
+  - task: HelmDeploy@0
+    displayName: Deploy
+    inputs:
+      connectionType: 'Azure Resource Manager'
+      azureSubscription: 'Azure subscription 1 (aea3f23c-28cc-46da-bf0e-b2907a086bef)'
+      azureResourceGroup: 'ABH-Praksa'
+      kubernetesCluster: 'ABH-Praksa'
+      namespace: 'auction'
+      command: 'upgrade'
+      chartType: 'FilePath'
+      chartPath: '$(Build.ArtifactStagingDirectory)/auction-backend-0.1.0.tgz'
+      force: true
+      arguments: '--create-namespace --set image.auth=$(DOCKER_AUTH) --set global.username=$(PSQL_USER) --set global.password=$(PSQL_PASS) --set global.database=$(PSQL_URL) --set global.url=$(PSQL_INIT)'
