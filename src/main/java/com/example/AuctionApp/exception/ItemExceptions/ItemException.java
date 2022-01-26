@@ -6,6 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public abstract class ItemException extends Exception {
-    Integer status;
+    Integer statusCode;
     String message;
 }

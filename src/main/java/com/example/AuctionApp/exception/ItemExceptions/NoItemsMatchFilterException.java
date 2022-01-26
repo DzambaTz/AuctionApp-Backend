@@ -5,6 +5,6 @@ public class NoItemsMatchFilterException extends ItemException {
 
     public NoItemsMatchFilterException(String exceptionMessage) {
         super.setMessage(exceptionMessage);
-        super.setStatus(404);
+        super.setStatusCode(404);
     }
 }

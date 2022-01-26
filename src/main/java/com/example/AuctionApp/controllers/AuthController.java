@@ -9,7 +9,6 @@
 package com.example.AuctionApp.controllers;
 
 import com.example.AuctionApp.exception.UserAuthExceptions.UserAuthException;
-import com.example.AuctionApp.exception.UserAuthExceptions.UserDeactivatedException;
 import com.example.AuctionApp.payload.request.LogOutRequest;
 import com.example.AuctionApp.payload.request.LoginRequest;
 import com.example.AuctionApp.payload.request.RefreshTokenRequest;
@@ -35,7 +34,7 @@ public class AuthController {
         try {
             return ResponseEntity.ok(userAuthService.signInUser(loginRequest));
         } catch (UserAuthException exception) {
-            return ResponseEntity.status(exception.getStatus()).body(new MessageResponse(exception.getMessage()));
+            return ResponseEntity.status(exception.getStatusCode()).body(new MessageResponse(exception.getMessage()));
         }
     }
 
@@ -44,7 +43,7 @@ public class AuthController {
         try {
             return ResponseEntity.ok(userAuthService.signUpUser(signUpRequest));
         } catch (UserAuthException exception){
-            return ResponseEntity.status(exception.getStatus()).body(new MessageResponse(exception.getMessage()));
+            return ResponseEntity.status(exception.getStatusCode()).body(new MessageResponse(exception.getMessage()));
         }
     }
 

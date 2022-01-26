@@ -5,6 +5,6 @@ public class UserDoesNotExistException extends UserAuthException{
 
     public UserDoesNotExistException(String exceptionMessage) {
         super.setMessage(exceptionMessage);
-        super.setStatus(404);
+        super.setStatusCode(404);
     }
 }

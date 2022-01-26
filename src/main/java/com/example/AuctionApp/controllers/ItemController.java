@@ -50,7 +50,7 @@ public class ItemController {
         try {
             return ResponseEntity.ok(itemService.getFilteredItems(searchItemRequest));
         } catch (ItemException exception) {
-            return ResponseEntity.status(exception.getStatus()).body(exception.getMessage());
+            return ResponseEntity.status(exception.getStatusCode()).body(exception.getMessage());
         }
     }
 
@@ -77,7 +77,7 @@ public class ItemController {
         try {
             return ResponseEntity.ok(itemService.addNewItem(userDetails.getId(), item));
         } catch (UserAuthException exception){
-            return ResponseEntity.status(exception.getStatus()).body(new MessageResponse(exception.getMessage()));
+            return ResponseEntity.status(exception.getStatusCode()).body(new MessageResponse(exception.getMessage()));
         }
     }
 }

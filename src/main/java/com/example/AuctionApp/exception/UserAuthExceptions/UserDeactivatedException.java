@@ -5,6 +5,6 @@ public class UserDeactivatedException extends UserAuthException {
 
     public UserDeactivatedException(String exceptionMessage) {
         super.setMessage(exceptionMessage);
-        super.setStatus(423);
+        super.setStatusCode(423);
     }
 }

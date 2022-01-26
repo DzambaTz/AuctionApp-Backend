@@ -5,6 +5,6 @@ public class EmailAlreadyInUseException extends UserAuthException {
 
     public EmailAlreadyInUseException(String exceptionMessage) {
         super.setMessage(exceptionMessage);
-        super.setStatus(409);
+        super.setStatusCode(409);
     }
 }
