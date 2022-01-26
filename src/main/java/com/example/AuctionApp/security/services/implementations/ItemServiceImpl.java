@@ -6,19 +6,21 @@
 
 package com.example.AuctionApp.security.services.implementations;
 
+import com.example.AuctionApp.exception.ItemExceptions.NoItemsMatchFilterException;
+import com.example.AuctionApp.exception.UserAuthExceptions.UserDoesNotExistException;
 import com.example.AuctionApp.models.Item;
+import com.example.AuctionApp.models.User;
 import com.example.AuctionApp.payload.request.SearchItemRequest;
 import com.example.AuctionApp.payload.response.ItemDataResponse;
-import com.example.AuctionApp.payload.response.MessageResponse;
 import com.example.AuctionApp.payload.response.UserItemResponse;
 import com.example.AuctionApp.repository.BidRepository;
 import com.example.AuctionApp.repository.ItemRepository;
+import com.example.AuctionApp.repository.UserRepository;
 import com.example.AuctionApp.security.jwt.JwtUtils;
 import com.example.AuctionApp.security.services.interfaces.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -35,6 +37,9 @@ public class ItemServiceImpl implements ItemService {
 
     @Autowired
     BidRepository bidRepository;
+
+    @Autowired
+    UserRepository userRepository;
 
     @Autowired
     JwtUtils jwtUtils;
@@ -70,7 +75,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ResponseEntity<?> getFilteredItems(SearchItemRequest searchItemRequest) {
+    public List<Item> getFilteredItems(SearchItemRequest searchItemRequest) throws NoItemsMatchFilterException {
         if (searchItemRequest.getMinPrice() == 0 && searchItemRequest.getMaxPrice() == 0) {
             searchItemRequest.setMinPrice(itemRepository.getMinPrice());
             searchItemRequest.setMaxPrice(itemRepository.getMaxPrice());
@@ -84,10 +89,10 @@ public class ItemServiceImpl implements ItemService {
         final List<Item> filteredItems = itemRepository.getFilteredItems(searchItemRequest, getSortingOrder(searchItemRequest));
 
         if (CollectionUtils.isEmpty(filteredItems)) {
-            return ResponseEntity.badRequest().body(new MessageResponse("No items match your filters!"));
+            throw new NoItemsMatchFilterException("No items match your filters!");
         }
 
-        return ResponseEntity.ok(filteredItems);
+        return filteredItems;
     }
 
     @Override
@@ -107,6 +112,18 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<UserItemResponse> getSoldUserItems(Long userId) {
         return itemRepository.getSoldUserItems(userId);
+    }
+
+    @Override
+    public Item addNewItem(Long userId, Item item) throws UserDoesNotExistException {
+        final Optional<User> user = userRepository.findUsersById(userId);
+        if (user.isPresent()) {
+            item.setUser(user.get());
+            System.out.println(item);
+            return itemRepository.addNewItem(item);
+        }
+
+        throw new UserDoesNotExistException("User not found!");
     }
 
     private PageRequest getSortingOrder(SearchItemRequest searchItemRequest) {
