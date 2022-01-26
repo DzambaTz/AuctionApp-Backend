@@ -8,6 +8,8 @@
 
 package com.example.AuctionApp.controllers;
 
+import com.example.AuctionApp.exception.UserAuthExceptions.UserAuthException;
+import com.example.AuctionApp.exception.UserAuthExceptions.UserDeactivatedException;
 import com.example.AuctionApp.payload.request.LogOutRequest;
 import com.example.AuctionApp.payload.request.LoginRequest;
 import com.example.AuctionApp.payload.request.RefreshTokenRequest;
@@ -30,12 +32,20 @@ public class AuthController {
 
     @PostMapping("/sign-in")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-        return userAuthService.signInUser(loginRequest);
+        try {
+            return ResponseEntity.ok(userAuthService.signInUser(loginRequest));
+        } catch (UserAuthException exception) {
+            return ResponseEntity.status(exception.getStatus()).body(new MessageResponse(exception.getMessage()));
+        }
     }
 
     @PostMapping("/sign-up")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
-        return userAuthService.signUpUser(signUpRequest);
+    public ResponseEntity<MessageResponse> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
+        try {
+            return ResponseEntity.ok(userAuthService.signUpUser(signUpRequest));
+        } catch (UserAuthException exception){
+            return ResponseEntity.status(exception.getStatus()).body(new MessageResponse(exception.getMessage()));
+        }
     }
 
     @PostMapping("/refresh-token")

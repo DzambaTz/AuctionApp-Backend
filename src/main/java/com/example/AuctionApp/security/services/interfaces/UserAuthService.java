@@ -6,10 +6,13 @@
 
 package com.example.AuctionApp.security.services.interfaces;
 
+import com.example.AuctionApp.exception.UserAuthExceptions.EmailAlreadyInUseException;
+import com.example.AuctionApp.exception.UserAuthExceptions.UserDeactivatedException;
 import com.example.AuctionApp.payload.request.LogOutRequest;
 import com.example.AuctionApp.payload.request.LoginRequest;
 import com.example.AuctionApp.payload.request.RefreshTokenRequest;
 import com.example.AuctionApp.payload.request.SignupRequest;
+import com.example.AuctionApp.payload.response.JwtResponse;
 import com.example.AuctionApp.payload.response.MessageResponse;
 import com.example.AuctionApp.payload.response.RefreshTokenResponse;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +24,7 @@ public interface UserAuthService {
      * @param loginRequest object that contains sign in credentials
      * @return MessageResponse if the sign in request was successful or not
      */
-    ResponseEntity<?> signInUser(LoginRequest loginRequest);
+    JwtResponse signInUser(LoginRequest loginRequest) throws UserDeactivatedException;
 
     /**
      * signUpUser tries to sign up a user with provided data
@@ -29,7 +32,7 @@ public interface UserAuthService {
      * @param signupRequest object that contains sign up data
      * @return MessageResponse if the sign up request was successful or not
      */
-    ResponseEntity<MessageResponse> signUpUser(SignupRequest signupRequest);
+    MessageResponse signUpUser(SignupRequest signupRequest) throws EmailAlreadyInUseException;
 
     /**
      * refreshUserToken tries to refresh a users JWT using the provided refresh token

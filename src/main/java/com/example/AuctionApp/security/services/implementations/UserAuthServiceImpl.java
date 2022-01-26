@@ -8,6 +8,8 @@ package com.example.AuctionApp.security.services.implementations;
 
 import com.example.AuctionApp.exception.RefreshTokenException;
 import com.example.AuctionApp.exception.RoleNotFoundException;
+import com.example.AuctionApp.exception.UserAuthExceptions.EmailAlreadyInUseException;
+import com.example.AuctionApp.exception.UserAuthExceptions.UserDeactivatedException;
 import com.example.AuctionApp.models.RefreshToken;
 import com.example.AuctionApp.models.Role;
 import com.example.AuctionApp.models.RolesEnum;
@@ -63,7 +65,7 @@ public class UserAuthServiceImpl implements UserAuthService {
     @Autowired
     RefreshTokenService refreshTokenService;
 
-    public ResponseEntity<?> signInUser(LoginRequest loginRequest) {
+    public JwtResponse signInUser(LoginRequest loginRequest) throws UserDeactivatedException {
         final Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
 
@@ -74,7 +76,7 @@ public class UserAuthServiceImpl implements UserAuthService {
         final String jwt = jwtUtils.generateJwtToken(userDetails);
 
         if (!userRepository.getUserStatus(userDetails.getId())) {
-            return ResponseEntity.status(423).body(new MessageResponse("User account has been deactivated"));
+            throw new UserDeactivatedException("User account has been deactivated");
         }
 
         final List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority)
@@ -82,20 +84,18 @@ public class UserAuthServiceImpl implements UserAuthService {
 
         final RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
 
-        return ResponseEntity.ok(new JwtResponse(jwt,
+        return new JwtResponse(jwt,
                 userDetails.getId(),
                 refreshToken.getToken(),
                 userDetails.getEmail(),
                 userDetails.getFirstName(),
                 userDetails.getLastName(),
-                roles));
+                roles);
     }
 
-    public ResponseEntity<MessageResponse> signUpUser(SignupRequest signupRequest) {
+    public MessageResponse signUpUser(SignupRequest signupRequest) throws EmailAlreadyInUseException {
         if (userRepository.existsByEmail(signupRequest.getEmail())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Error: Email is already in use!"));
+            throw new EmailAlreadyInUseException("Error: Email is already in use!");
         }
 
         final User user = getUser(signupRequest);
@@ -104,7 +104,7 @@ public class UserAuthServiceImpl implements UserAuthService {
 
         userRepository.save(user);
 
-        return ResponseEntity.ok(new MessageResponse("User successfully registered"));
+        return new MessageResponse("User successfully registered");
     }
 
     public RefreshTokenResponse refreshUserToken(RefreshTokenRequest request) {
