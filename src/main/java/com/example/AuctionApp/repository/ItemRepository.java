@@ -69,7 +69,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     )
     List<UserItemResponse> getSoldUserItems(Long userId);
 
-    default void addNewItem(Item item) {
-        save(item);
+    default Item addNewItem(Item item) {
+        return save(item);
     }
 }

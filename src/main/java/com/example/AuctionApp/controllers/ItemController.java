@@ -6,6 +6,8 @@
 
 package com.example.AuctionApp.controllers;
 
+import com.example.AuctionApp.exception.ItemExceptions.ItemException;
+import com.example.AuctionApp.exception.UserAuthExceptions.UserAuthException;
 import com.example.AuctionApp.models.Item;
 import com.example.AuctionApp.payload.request.SearchItemRequest;
 import com.example.AuctionApp.payload.response.ItemDataResponse;
@@ -45,7 +47,11 @@ public class ItemController {
 
     @GetMapping("/search")
     public ResponseEntity<?> getFilteredItems(SearchItemRequest searchItemRequest) {
-        return itemService.getFilteredItems(searchItemRequest);
+        try {
+            return ResponseEntity.ok(itemService.getFilteredItems(searchItemRequest));
+        } catch (ItemException exception) {
+            return ResponseEntity.status(exception.getStatus()).body(exception.getMessage());
+        }
     }
 
     @GetMapping("/price-limits")
@@ -67,8 +73,11 @@ public class ItemController {
 
     @PostMapping("/new-item")
     @PreAuthorize("hasRole('SELLER')")
-    public ResponseEntity<MessageResponse> postNewItem(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody Item item) {
-        itemService.addNewItem(userDetails.getId(), item);
-        return ResponseEntity.ok(new MessageResponse("Item posted!"));
+    public ResponseEntity<?> postNewItem(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody Item item) {
+        try {
+            return ResponseEntity.ok(itemService.addNewItem(userDetails.getId(), item));
+        } catch (UserAuthException exception){
+            return ResponseEntity.status(exception.getStatus()).body(new MessageResponse(exception.getMessage()));
+        }
     }
 }

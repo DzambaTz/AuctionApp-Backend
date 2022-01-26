@@ -8,11 +8,12 @@
 package com.example.AuctionApp.security.services.interfaces;
 
 
+import com.example.AuctionApp.exception.ItemExceptions.NoItemsMatchFilterException;
+import com.example.AuctionApp.exception.UserAuthExceptions.UserDoesNotExistException;
 import com.example.AuctionApp.models.Item;
 import com.example.AuctionApp.payload.request.SearchItemRequest;
 import com.example.AuctionApp.payload.response.ItemDataResponse;
 import com.example.AuctionApp.payload.response.UserItemResponse;
-import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -47,7 +48,7 @@ public interface ItemService {
      * @param searchItemRequest object that contains the search keyword and filters that should be applied
      * @return List<Item> list of items that pass the filters and fit the search criterion
      */
-    ResponseEntity<?> getFilteredItems(SearchItemRequest searchItemRequest);
+    List<Item> getFilteredItems(SearchItemRequest searchItemRequest) throws NoItemsMatchFilterException;
 
     /**
      * getItemPriceLimits method returns the price of the cheapest and price of the most expensive item
@@ -74,5 +75,5 @@ public interface ItemService {
      */
     List<UserItemResponse> getSoldUserItems(Long userId);
 
-    void addNewItem(Long userId, Item item);
+    Item addNewItem(Long userId, Item item) throws UserDoesNotExistException;
 }
