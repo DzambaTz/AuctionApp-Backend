@@ -8,11 +8,12 @@ package com.example.AuctionApp.repository;
 
 import com.example.AuctionApp.models.Item;
 import com.example.AuctionApp.payload.request.SearchItemRequest;
+import com.example.AuctionApp.payload.response.UserItemResponse;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import javax.persistence.Tuple;
 import java.util.List;
 
 public interface ItemRepository extends JpaRepository<Item, Long> {
@@ -52,4 +53,19 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     )
     Float getMaxPrice();
 
+    @Query(
+            value = "SELECT items.id as itemId, images[1] as imageUrl,name,cast((end_time - now()) as varchar) AS timeLeft,start_price as startPrice, " +
+                    "COUNT(DISTINCT bids.id) AS numberOfBids, COALESCE(MAX(DISTINCT bids.amount),0) AS highestBid FROM items LEFT OUTER JOIN bids " +
+                    "ON items.id = bids.item_id WHERE end_time > now() AND items.user_id = ?1 GROUP BY items.id",
+            nativeQuery = true
+    )
+    List<UserItemResponse> getActiveUserItems(Long userId);
+
+    @Query(
+            value = "SELECT items.id as itemId, images[1] as imageUrl,name,NULL AS timeLeft,start_price as startPrice, COUNT(DISTINCT bids.id)\n" +
+                    "AS numberOfBids, COALESCE(MAX(DISTINCT bids.amount),0) AS highestBid FROM items LEFT OUTER JOIN bids " +
+                    "ON items.id = bids.item_id WHERE end_time < now() AND items.user_id = ?1 GROUP BY items.id",
+            nativeQuery = true
+    )
+    List<UserItemResponse> getSoldUserItems(Long userId);
 }

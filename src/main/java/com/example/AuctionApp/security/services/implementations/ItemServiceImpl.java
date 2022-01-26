@@ -7,12 +7,13 @@
 package com.example.AuctionApp.security.services.implementations;
 
 import com.example.AuctionApp.models.Item;
-import com.example.AuctionApp.models.SortCriterion;
 import com.example.AuctionApp.payload.request.SearchItemRequest;
 import com.example.AuctionApp.payload.response.ItemDataResponse;
 import com.example.AuctionApp.payload.response.MessageResponse;
+import com.example.AuctionApp.payload.response.UserItemResponse;
 import com.example.AuctionApp.repository.BidRepository;
 import com.example.AuctionApp.repository.ItemRepository;
+import com.example.AuctionApp.security.jwt.JwtUtils;
 import com.example.AuctionApp.security.services.interfaces.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -25,10 +26,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
-
-import static com.example.AuctionApp.models.SortCriterion.*;
 
 @Service
 public class ItemServiceImpl implements ItemService {
@@ -38,39 +36,42 @@ public class ItemServiceImpl implements ItemService {
     @Autowired
     BidRepository bidRepository;
 
-    public ResponseEntity<?> getItemData(Long itemId) {
+    @Autowired
+    JwtUtils jwtUtils;
+
+    public ItemDataResponse getItemData(Long itemId) {
         final Optional<Item> item = Optional.of(itemRepository.getById(itemId));
         final Float highestBid = bidRepository.findLargestBid(itemId);
         final Integer numberOfBids = bidRepository.countBids(itemId);
         final Duration endOfAuction = timeLeftTillEndOfAuction(item.get());
 
-        return ResponseEntity.ok(new ItemDataResponse(
+        return new ItemDataResponse(
                 item.get().getStartPrice(),
                 highestBid,
                 numberOfBids,
                 endOfAuction,
                 item.get().getDescription(),
                 item.get().getName(),
-                item.get().getImages()));
+                item.get().getImages());
     }
 
     @Override
-    public ResponseEntity<?> getNewArrivals() {
-        return ResponseEntity.ok(itemRepository.findAllByOrderByStartTimeDesc());
+    public List<Item> getNewArrivals() {
+        return itemRepository.findAllByOrderByStartTimeDesc();
     }
 
     @Override
-    public ResponseEntity<?> getLastChanceItems() {
-        return ResponseEntity.ok(itemRepository.findAllByOrderByEndTimeAsc());
+    public List<Item> getLastChanceItems() {
+        return itemRepository.findAllByOrderByEndTimeAsc();
     }
 
-    private Duration timeLeftTillEndOfAuction(Item item){
+    private Duration timeLeftTillEndOfAuction(Item item) {
         return item.getEndTime().compareTo(Instant.now()) <= 0 ? Duration.ZERO : Duration.between(item.getEndTime(), Instant.now());
     }
 
     @Override
-    public ResponseEntity<?> getFilteredItems(SearchItemRequest searchItemRequest){
-        if(searchItemRequest.getMinPrice() == 0 && searchItemRequest.getMaxPrice() == 0){
+    public ResponseEntity<?> getFilteredItems(SearchItemRequest searchItemRequest) {
+        if (searchItemRequest.getMinPrice() == 0 && searchItemRequest.getMaxPrice() == 0) {
             searchItemRequest.setMinPrice(itemRepository.getMinPrice());
             searchItemRequest.setMaxPrice(itemRepository.getMaxPrice());
         }
@@ -82,7 +83,7 @@ public class ItemServiceImpl implements ItemService {
 
         final List<Item> filteredItems = itemRepository.getFilteredItems(searchItemRequest, getSortingOrder(searchItemRequest));
 
-        if(CollectionUtils.isEmpty(filteredItems)){
+        if (CollectionUtils.isEmpty(filteredItems)) {
             return ResponseEntity.badRequest().body(new MessageResponse("No items match your filters!"));
         }
 
@@ -90,25 +91,35 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ResponseEntity<?> getItemPriceLimits() {
+    public List<Float> getItemPriceLimits() {
         List<Float> itemPrices = new ArrayList<>();
         itemPrices.add(itemRepository.getMinPrice());
         itemPrices.add(itemRepository.getMaxPrice());
 
-        return ResponseEntity.ok(itemPrices);
+        return itemPrices;
     }
 
-    private PageRequest getSortingOrder(SearchItemRequest searchItemRequest){
+    @Override
+    public List<UserItemResponse> getActiveUserItems(Long userId) {
+        return itemRepository.getActiveUserItems(userId);
+    }
+
+    @Override
+    public List<UserItemResponse> getSoldUserItems(Long userId) {
+        return itemRepository.getSoldUserItems(userId);
+    }
+
+    private PageRequest getSortingOrder(SearchItemRequest searchItemRequest) {
         return PageRequest.of(
                 searchItemRequest.getPageNumber(),
                 searchItemRequest.getPageSize(),
                 Sort.Direction.fromString(searchItemRequest.getDirection().name()),
                 getSortByPropertyFromFilter(searchItemRequest)
-                );
+        );
     }
 
-    private String getSortByPropertyFromFilter(SearchItemRequest searchItemRequest){
-        switch (searchItemRequest.getSortBy()){
+    private String getSortByPropertyFromFilter(SearchItemRequest searchItemRequest) {
+        switch (searchItemRequest.getSortBy()) {
             case DEFAULT_SORT:
                 return "name";
             case NEWNESS_SORT:

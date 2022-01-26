@@ -8,14 +8,16 @@ package com.example.AuctionApp.security.services.implementations;
 
 import com.example.AuctionApp.exception.RefreshTokenException;
 import com.example.AuctionApp.exception.RoleNotFoundException;
+import com.example.AuctionApp.exception.UserAuthExceptions.EmailAlreadyInUseException;
+import com.example.AuctionApp.exception.UserAuthExceptions.UserDeactivatedException;
 import com.example.AuctionApp.models.RefreshToken;
 import com.example.AuctionApp.models.Role;
 import com.example.AuctionApp.models.RolesEnum;
 import com.example.AuctionApp.models.User;
 import com.example.AuctionApp.payload.request.LogOutRequest;
 import com.example.AuctionApp.payload.request.LoginRequest;
-import com.example.AuctionApp.payload.request.SignupRequest;
 import com.example.AuctionApp.payload.request.RefreshTokenRequest;
+import com.example.AuctionApp.payload.request.SignupRequest;
 import com.example.AuctionApp.payload.response.JwtResponse;
 import com.example.AuctionApp.payload.response.MessageResponse;
 import com.example.AuctionApp.payload.response.RefreshTokenResponse;
@@ -63,7 +65,7 @@ public class UserAuthServiceImpl implements UserAuthService {
     @Autowired
     RefreshTokenService refreshTokenService;
 
-    public ResponseEntity<?> signInUser(LoginRequest loginRequest){
+    public JwtResponse signInUser(LoginRequest loginRequest) throws UserDeactivatedException {
         final Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
 
@@ -73,25 +75,27 @@ public class UserAuthServiceImpl implements UserAuthService {
 
         final String jwt = jwtUtils.generateJwtToken(userDetails);
 
+        if (!userRepository.getUserStatus(userDetails.getId())) {
+            throw new UserDeactivatedException("User account has been deactivated");
+        }
+
         final List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
 
         final RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
 
-        return ResponseEntity.ok(new JwtResponse(jwt,
+        return new JwtResponse(jwt,
                 userDetails.getId(),
                 refreshToken.getToken(),
                 userDetails.getEmail(),
                 userDetails.getFirstName(),
                 userDetails.getLastName(),
-                roles));
+                roles);
     }
 
-    public ResponseEntity<?> signUpUser(SignupRequest signupRequest){
+    public MessageResponse signUpUser(SignupRequest signupRequest) throws EmailAlreadyInUseException {
         if (userRepository.existsByEmail(signupRequest.getEmail())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Error: Email is already in use!"));
+            throw new EmailAlreadyInUseException("Error: Email is already in use!");
         }
 
         final User user = getUser(signupRequest);
@@ -100,10 +104,10 @@ public class UserAuthServiceImpl implements UserAuthService {
 
         userRepository.save(user);
 
-        return ResponseEntity.ok(new MessageResponse("User successfully registered"));
+        return new MessageResponse("User successfully registered");
     }
 
-    public ResponseEntity<?> refreshUserToken(RefreshTokenRequest request){
+    public RefreshTokenResponse refreshUserToken(RefreshTokenRequest request) {
         final String requestRefreshToken = request.getRefreshToken();
 
         return refreshTokenService.findByToken(requestRefreshToken)
@@ -112,18 +116,18 @@ public class UserAuthServiceImpl implements UserAuthService {
                 .map(user -> {
                     final String token = jwtUtils.generateTokenFromEmail(user.getEmail());
                     logger.error(token);
-                    return ResponseEntity.ok(new RefreshTokenResponse(token, requestRefreshToken));
+                    return new RefreshTokenResponse(token, requestRefreshToken);
                 })
                 .orElseThrow(() -> new RefreshTokenException(requestRefreshToken,
                         "Refresh token is not in database!"));
     }
 
-    public ResponseEntity<?> logoutUser(LogOutRequest logOutRequest){
+    public MessageResponse logoutUser(LogOutRequest logOutRequest) {
         refreshTokenService.deleteByUserId(logOutRequest.getUserId());
-        return ResponseEntity.ok(new MessageResponse("Log out successful!"));
+        return new MessageResponse("Log out successful!");
     }
 
-    private User getUser(SignupRequest signupRequest){
+    private User getUser(SignupRequest signupRequest) {
         return new User(
                 signupRequest.getFirstName(),
                 signupRequest.getLastName(),
@@ -133,7 +137,7 @@ public class UserAuthServiceImpl implements UserAuthService {
         );
     }
 
-    private Set<Role> getRoles(Set<String> strRoles){
+    private Set<Role> getRoles(Set<String> strRoles) {
         Set<Role> roles = new HashSet<>();
 
         if (strRoles == null) {

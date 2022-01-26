@@ -11,6 +11,7 @@ import com.example.AuctionApp.models.Item;
 import com.example.AuctionApp.models.User;
 import com.example.AuctionApp.payload.request.BidRequest;
 import com.example.AuctionApp.payload.response.MessageResponse;
+import com.example.AuctionApp.payload.response.UserBidsItemResponse;
 import com.example.AuctionApp.repository.BidRepository;
 import com.example.AuctionApp.repository.ItemRepository;
 import com.example.AuctionApp.repository.UserRepository;
@@ -22,6 +23,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BiddingServiceImpl implements BiddingService {
@@ -39,32 +42,37 @@ public class BiddingServiceImpl implements BiddingService {
     JwtUtils jwtUtils;
 
 
-    public ResponseEntity<?> placeBid(BidRequest request, Long itemId, String jwt) {
+    public ResponseEntity<?> placeBid(BidRequest request, Long itemId, Long userId) {
         final Item item = itemRepository.getById(itemId);
-        final User user =  jwtUtils.getUserDetailsFromJwt(jwt.substring(7));
+        final Optional<User> user = userRepository.findUsersById(userId);
         final Instant date = new Date().toInstant();
 
-        if(bidHasInvalidAmount(item, request.getAmount())){
+        if (bidHasInvalidAmount(item, request.getAmount())) {
             return ResponseEntity.badRequest().body(new MessageResponse("There are higher bids than yours. You could give a second try!"));
         }
 
-        if(auctionEnded(item,date)){
+        if (auctionEnded(item, date)) {
             return ResponseEntity.badRequest().body(new MessageResponse("The auction for the current item has finished."));
         }
 
-        bidRepository.save(new Bid(item,user, request.getAmount(), date));
+        bidRepository.placeBid(new Bid(item, user.get(), request.getAmount(), date));
         return ResponseEntity.ok(new MessageResponse("Congrats! You are the highest bidder"));
     }
 
-    public Integer countBids(Long itemId){
+    public Integer countBids(Long itemId) {
         return bidRepository.countBids(itemId);
     }
 
-    private Boolean bidHasInvalidAmount(Item item, Float bidAmount){
+    @Override
+    public List<UserBidsItemResponse> getUserBids(Long userId) {
+        return bidRepository.getUserBids(userId);
+    }
+
+    private Boolean bidHasInvalidAmount(Item item, Float bidAmount) {
         return bidAmount < item.getStartPrice() || bidAmount <= (bidRepository.findLargestBid(item.getId()));
     }
 
-    private Boolean auctionEnded(Item item, Instant date){
-        return  date.compareTo(item.getEndTime()) > 0;
+    private Boolean auctionEnded(Item item, Instant date) {
+        return date.compareTo(item.getEndTime()) > 0;
     }
 }

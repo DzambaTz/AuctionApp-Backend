@@ -34,4 +34,3 @@ public class TestController {
         return ResponseEntity.ok(new MessageResponse("Backend is online!"));
     }
 }
-

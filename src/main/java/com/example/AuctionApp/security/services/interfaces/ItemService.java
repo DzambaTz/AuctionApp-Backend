@@ -8,8 +8,13 @@
 package com.example.AuctionApp.security.services.interfaces;
 
 
+import com.example.AuctionApp.models.Item;
 import com.example.AuctionApp.payload.request.SearchItemRequest;
+import com.example.AuctionApp.payload.response.ItemDataResponse;
+import com.example.AuctionApp.payload.response.UserItemResponse;
 import org.springframework.http.ResponseEntity;
+
+import java.util.List;
 
 public interface ItemService {
     /**
@@ -18,7 +23,7 @@ public interface ItemService {
      * @param itemId Id of the item that the user is trying to view
      * @return ItemDataResponse object that contains all the item data
      */
-    ResponseEntity<?> getItemData(Long itemId);
+    ItemDataResponse getItemData(Long itemId);
 
     /**
      * getNewArrivals method returns item sorted by auction time remaining in descending
@@ -26,7 +31,7 @@ public interface ItemService {
      *
      * @return List<Item> list of items sorted by auction time remaining in descending order
      */
-    ResponseEntity<?> getNewArrivals();
+    List<Item> getNewArrivals();
 
     /**
      * getLastChanceItems method returns item sorted by auction time remaining in ascending
@@ -34,7 +39,7 @@ public interface ItemService {
      *
      * @return List<Item> list of items sorted by auction time remaining in ascending order
      */
-    ResponseEntity<?> getLastChanceItems();
+    List<Item> getLastChanceItems();
 
     /**
      * getFilteredItems method returns a list of items that fit the search and filter criterion
@@ -50,5 +55,22 @@ public interface ItemService {
      *
      * @return List<Float> list with two entries: min and max price of items in database
      */
-    ResponseEntity<?> getItemPriceLimits();
+    List<Float> getItemPriceLimits();
+
+    /**
+     * getActiveUserItems method returns a list of active items that a specific user posted,
+     * specified by the userId parameter.
+     *
+     * @param userId ID of the user that we are fetching the active items for
+     * @return List<UserItemResponse> list of objects that contain data about the active items
+     */
+    List<UserItemResponse> getActiveUserItems(Long userId);
+
+    /**
+     * getSoldUserItems method returns a list of sold items (the auction period for them has finished).
+     *
+     * @param userId ID of the user trying to access his sold items
+     * @return List<Float> list with two entries: min and max price of items in database
+     */
+    List<UserItemResponse> getSoldUserItems(Long userId);
 }

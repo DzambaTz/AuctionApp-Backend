@@ -1,0 +1,25 @@
+spring:
+  jpa:
+    generate-ddl: 'true'
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          lob:
+            non_contextual_creation: 'true'
+        format_sql: 'true'
+    hibernate:
+      ddl-auto: update
+    show-sql: 'true'
+  datasource:
+    password: ${DATABASE_PASSWORD}
+    username: ${DATABASE_USERNAME}
+    url: ${DATABASE_URL}
+auction:
+  app:
+    jwtExpirationMs: '3600000'
+    jwtRefreshExpirationMs: '86400000'
+    jwtSecret: AuctionAppSecretKey
+server:
+  error:
+    include-message: always

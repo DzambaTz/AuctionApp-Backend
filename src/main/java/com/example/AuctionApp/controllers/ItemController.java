@@ -6,11 +6,19 @@
 
 package com.example.AuctionApp.controllers;
 
+import com.example.AuctionApp.models.Item;
 import com.example.AuctionApp.payload.request.SearchItemRequest;
+import com.example.AuctionApp.payload.response.ItemDataResponse;
+import com.example.AuctionApp.payload.response.UserItemResponse;
+import com.example.AuctionApp.security.services.implementations.UserDetailsImpl;
 import com.example.AuctionApp.security.services.interfaces.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -19,28 +27,40 @@ public class ItemController {
     @Autowired
     ItemService itemService;
 
-    @GetMapping(path = "/{itemId}")
-    public ResponseEntity<?> getItemData(@PathVariable("itemId") Long itemId) {
-        return itemService.getItemData(itemId);
+    @GetMapping("/{itemId}")
+    public ResponseEntity<ItemDataResponse> getItemData(@PathVariable("itemId") Long itemId) {
+        return ResponseEntity.ok(itemService.getItemData(itemId));
     }
 
-    @GetMapping(path = "/newArrivals")
-    public ResponseEntity<?> getNewArrivals() {
-        return itemService.getNewArrivals();
+    @GetMapping("/new-arrivals")
+    public ResponseEntity<List<Item>> getNewArrivals() {
+        return ResponseEntity.ok(itemService.getNewArrivals());
     }
 
-    @GetMapping(path = "/lastChance")
-    public ResponseEntity<?> getLastChanceItems() {
-        return itemService.getLastChanceItems();
+    @GetMapping("/last-chance")
+    public ResponseEntity<List<Item>> getLastChanceItems() {
+        return ResponseEntity.ok(itemService.getLastChanceItems());
     }
 
-    @GetMapping(path = "/search")
+    @GetMapping("/search")
     public ResponseEntity<?> getFilteredItems(SearchItemRequest searchItemRequest) {
         return itemService.getFilteredItems(searchItemRequest);
     }
 
-    @GetMapping(path = "/priceLimits")
-    public ResponseEntity<?> getItemPriceLimits(){
-        return itemService.getItemPriceLimits();
+    @GetMapping("/price-limits")
+    public ResponseEntity<List<Float>> getItemPriceLimits() {
+        return ResponseEntity.ok(itemService.getItemPriceLimits());
+    }
+
+    @GetMapping("/active-items")
+    @PreAuthorize("hasRole('SELLER')")
+    public ResponseEntity<List<UserItemResponse>> getUsersActiveItems(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok(itemService.getActiveUserItems(userDetails.getId()));
+    }
+
+    @GetMapping("/sold-items")
+    @PreAuthorize("hasRole('SELLER')")
+    public ResponseEntity<List<UserItemResponse>> getUsersSoldItems(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok(itemService.getSoldUserItems(userDetails.getId()));
     }
 }

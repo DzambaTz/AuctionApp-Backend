@@ -33,8 +33,10 @@ public class Bid {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
+    @Column(name = "amount")
     private Float amount;
 
+    @Column(name = "date_created")
     private Instant dateCreated;
 
     public Bid(Item item, User user, Float amount, Instant dateCreated) {
