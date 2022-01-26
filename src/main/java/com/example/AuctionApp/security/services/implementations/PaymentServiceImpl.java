@@ -25,11 +25,11 @@ public class PaymentServiceImpl implements PaymentService {
     private static final String DEFAULT_CURRENCY = "usd";
     @Autowired
     UserRepository userRepository;
-    @Value("${auction.app.stripeApiKey}")
+    @Value("${auction.app.stripe.stripeApiKey}")
     private String stripeApiKey;
-    @Value("${auction.app.successUrl}")
+    @Value("${auction.app.stripe.successUrl}")
     private String successUrl;
-    @Value("${auction.app.cancelUrl}")
+    @Value("${auction.app.stripe.cancelUrl}")
     private String cancelUrl;
 
     @Override

@@ -20,9 +20,10 @@ auction:
     jwtExpirationMs: '3600000'
     jwtRefreshExpirationMs: '86400000'
     jwtSecret: AuctionAppSecretKey
-    stripeApiKey: ${STRIPE_API_KEY}
-    cancelUrl: ${PAYMENT_CANCEL_URL}
-    successUrl: ${PAYMENT_SUCCESS_URL}
+    stripe:
+      stripeApiKey: ${STRIPE_API_KEY}
+      cancelUrl: ${PAYMENT_CANCEL_URL}
+      successUrl: ${PAYMENT_SUCCESS_URL}
 server:
   error:
     include-message: always
