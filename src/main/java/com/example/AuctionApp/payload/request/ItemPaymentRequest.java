@@ -9,9 +9,6 @@ import lombok.*;
 @ToString
 public class ItemPaymentRequest {
     Long paymentAmount;
-
     String imageUrl;
-
-    String name;
-
+    String itemName;
 }

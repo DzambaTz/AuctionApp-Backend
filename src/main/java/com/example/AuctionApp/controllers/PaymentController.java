@@ -1,5 +1,6 @@
 package com.example.AuctionApp.controllers;
 
+import com.example.AuctionApp.exception.UserAuthExceptions.UserAuthException;
 import com.example.AuctionApp.payload.request.ItemPaymentRequest;
 import com.example.AuctionApp.payload.response.MessageResponse;
 import com.example.AuctionApp.security.services.implementations.UserDetailsImpl;
@@ -22,6 +23,12 @@ public class PaymentController {
     @PostMapping("/create-checkout-session")
     @PreAuthorize("hasRole('SELLER')")
     public ResponseEntity<MessageResponse> createCheckoutSession(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody ItemPaymentRequest itemData) throws StripeException {
-        return ResponseEntity.ok(new MessageResponse(paymentService.createCheckoutSession(userDetails, itemData)));
+        try {
+            return ResponseEntity.ok(new MessageResponse(paymentService.createCheckoutSession(userDetails, itemData)));
+        } catch (StripeException exception) {
+            return ResponseEntity.status(exception.getStatusCode()).body(new MessageResponse(exception.getMessage()));
+        } catch (UserAuthException exception) {
+            return ResponseEntity.status(exception.getStatusCode()).body(new MessageResponse(exception.getMessage()));
+        }
     }
 }
